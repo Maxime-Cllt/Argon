@@ -45,3 +45,5 @@ venv
 venv1
 gradle
 .idea
+data
+argon.db
