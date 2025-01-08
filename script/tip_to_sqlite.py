@@ -1,11 +1,14 @@
+import os
 import sqlite3
 
 import pandas as pd
 
 if __name__ == '__main__':
-    file = "../data/yelp_academic_dataset_tip.csv"
+    absolute_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
-    # count the number of lines in the file
+    file = os.path.join(absolute_path, "data/yelp_academic_dataset_tip.csv")
+
+    # compter le nombre de lignes dans le fichier
     with open(file) as f:
         num_lines = sum(1 for line in f)
 
