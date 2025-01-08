@@ -1,3 +1,6 @@
+SELECT COUNT(*)
+FROM tips_data;
+
 -- Suppression où le business_id n'est pas un id valide
 DELETE
 FROM tips
