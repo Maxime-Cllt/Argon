@@ -8,12 +8,17 @@ conn = sqlite3.connect("../argon.db")
 cursor = conn.cursor()
 
 cursor.execute("""
-CREATE TABLE IF NOT EXISTS checkin_date (
-    business_id VARCHAR(22),
-    date DATETIME
-)
+DROP TABLE IF EXISTS checkin_date
 """)
 
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS checkin_date (
+    business_id VARCHAR(22),
+    date DATETIME,
+    FOREIGN KEY (business_id) REFERENCES business (business_id)
+)
+""")
 
 conn.commit()
 

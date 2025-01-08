@@ -21,22 +21,25 @@ if __name__ == '__main__':
     cursor = conn.cursor()
 
     cursor.execute("""
-    DROP TABLE IF EXISTS tip
+    DROP TABLE IF EXISTS tips
     """)
 
     conn.commit()
 
-    # cursor.execute("""
-    # CREATE TABLE tip (
-    #     business_id TEXT,
-    #     compliment_count INTEGER,
-    #     date TEXT,
-    #     text TEXT,
-    #     user_id TEXT
-    # )
-    # """)
+    cursor.execute("""
+    CREATE TABLE tips (
+        business_id  TEXT,
+        compliment_count INTEGER,
+        date TEXT,
+        text TEXT,
+        user_id TEXT,
+        FOREIGN KEY (business_id) REFERENCES business (business_id)
+    )
+    """)
 
-    df.to_sql("tip", conn, if_exists="replace", index=False)
+    conn.commit()
+
+    df.to_sql("tips", conn, if_exists="replace", index=False)
 
     conn.close()
 
