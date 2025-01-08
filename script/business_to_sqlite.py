@@ -12,6 +12,7 @@ cursor.execute("DROP TABLE IF EXISTS business")
 cursor.execute("DROP TABLE IF EXISTS hours")
 cursor.execute("DROP TABLE IF EXISTS attributes")
 cursor.execute("DROP TABLE IF EXISTS business_parking")
+cursor.execute("DROP TABLE IF EXISTS business_categories")
 conn.commit()
 
 cursor.execute("""
@@ -60,6 +61,14 @@ CREATE TABLE IF NOT EXISTS business_parking (
     validated INTEGER DEFAULT NULL,
     lot INTEGER DEFAULT NULL,
     valet INTEGER DEFAULT NULL,
+    FOREIGN KEY (business_id) REFERENCES business(business_id)
+)
+""")
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS business_categories (
+    business_id VARCHAR(22) NOT NULL,
+    category VARCHAR(255) NOT NULL,
     FOREIGN KEY (business_id) REFERENCES business(business_id)
 )
 """)
@@ -113,6 +122,17 @@ with open(file_name, "r") as file:
                     INSERT INTO attributes (business_id, key, value)
                     VALUES (?, ?, ?)
                     """, (business_id, key, value))
+
+
+        categories = data.get("categories")
+
+        if categories:
+            values = categories.split(", ")
+            for value in values:
+                cursor.execute("""
+                INSERT INTO business_categories (business_id, category)
+                VALUES (?, ?)
+                """, (business_id, value))
 
         cursor.execute("""
         INSERT INTO business (business_id, name, address, city, state, postal_code, latitude, longitude, review_count, is_open)
