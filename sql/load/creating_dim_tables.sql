@@ -5,11 +5,7 @@ DROP TABLE IF EXISTS dim_business_attributes;
 DROP TABLE IF EXISTS dim_business_hours;
 DROP TABLE IF EXISTS dim_parking;
 DROP TABLE IF EXISTS dim_date;
-DROP TABLE IF EXISTS fact_checkin;
-DROP TABLE IF EXISTS fact_tips;
-DROP TABLE IF EXISTS fact_category;
-DROP TABLE IF EXISTS fact_attribute;
-
+DROP TABLE IF EXISTS fact_business;
 
 CREATE TABLE dim_business
 (
@@ -60,55 +56,26 @@ CREATE TABLE dim_parking
     valet       INTEGER
 );
 
-CREATE TABLE dim_business_attributes
-(
-    business_id VARCHAR(22),
-    key         VARCHAR(255),
-    value       VARCHAR(255),
-    PRIMARY KEY (business_id, key)
-);
-
 CREATE TABLE dim_user
 (
     user_id VARCHAR(22) PRIMARY KEY,
     name    VARCHAR(64)
 );
 
-
--- CREATE TABLE fact_checkin
--- (
---     checkin_id    INTEGER PRIMARY KEY AUTOINCREMENT,
---     business_id   VARCHAR(22),
---     date_id       INTEGER,
---     FOREIGN KEY (business_id) REFERENCES dim_business (business_id),
---     FOREIGN KEY (date_id) REFERENCES dim_date (date_id)
--- );
-
-CREATE TABLE fact_tips
+CREATE TABLE fact_business
 (
-    tip_id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    fact_id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    fact_type        VARCHAR(20),
     business_id      VARCHAR(22),
-    user_id          VARCHAR(255),
+    date_id          INTEGER,
+    user_id          VARCHAR(22),
+    category_id      INTEGER,
+    key              VARCHAR(255),
+    value            VARCHAR(255),
     compliment_count INTEGER,
-    tip_date         DATE,
     text             TEXT,
     FOREIGN KEY (business_id) REFERENCES dim_business (business_id),
-    FOREIGN KEY (user_id) REFERENCES dim_user (user_id)
-);
-
-CREATE TABLE fact_category
-(
-    business_id VARCHAR(22),
-    category_id INTEGER,
-    FOREIGN KEY (business_id) REFERENCES dim_business (business_id),
+    FOREIGN KEY (date_id) REFERENCES dim_date (date_id),
+    FOREIGN KEY (user_id) REFERENCES dim_user (user_id),
     FOREIGN KEY (category_id) REFERENCES dim_category (category_id)
-);
-
-CREATE TABLE fact_attribute
-(
-    business_id VARCHAR(22),
-    key         VARCHAR(255),
-    value       VARCHAR(255),
-    PRIMARY KEY (business_id, key),
-    FOREIGN KEY (business_id) REFERENCES dim_business (business_id)
 );

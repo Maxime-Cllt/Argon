@@ -1,3 +1,4 @@
+-- Remplissage des dimensions
 INSERT INTO dim_business (business_id, name, address, city, state, postal_code, latitude, longitude, review_count,
                           is_open)
 SELECT business_id,
@@ -12,9 +13,8 @@ SELECT business_id,
        is_open
 FROM business;
 
-
 INSERT INTO dim_date (date)
-SELECT date
+SELECT DISTINCT date
 FROM checkin_date;
 
 INSERT INTO dim_category (category)
@@ -46,47 +46,42 @@ SELECT business_id,
        valet
 FROM business_parking;
 
-INSERT INTO dim_business_attributes (business_id, key, value)
-SELECT business_id,
-       key,
-       value
-FROM business_attributes;
+-- Remplissage de la table de faits centralisée fact_business
 
-
--- INSERT INTO fact_checkin (business_id, date_id)
--- SELECT business_id,
+-- Insertion des checkins
+-- INSERT INTO fact_business (fact_type, business_id, date_id)
+-- SELECT 'checkin' AS fact_type,
+--        business_id,
 --        (SELECT date_id FROM dim_date WHERE date = checkin_date.date) AS date_id
 -- FROM checkin_date
--- GROUP BY business_id, checkin_date.date
--- LIMIT 100;
+-- GROUP BY business_id, checkin_date.date;
 
-INSERT INTO fact_tips (business_id, user_id, compliment_count, tip_date, text)
-SELECT business_id,
+-- Insertion des tips
+INSERT INTO fact_business (fact_type, business_id, user_id, compliment_count, text, date_id)
+SELECT 'tip'                                                 AS fact_type,
+       business_id,
        user_id,
        CAST(compliment_count AS INTEGER),
-       date,
-       text
-FROM tips;
+       text,
+       (SELECT date_id FROM dim_date WHERE date = tips.date) AS date_id
+FROM tips
+LIMIT 1000;
 
-INSERT INTO fact_category (business_id, category_id)
-SELECT business_id, category_id
+-- Insertion des catégories
+INSERT INTO fact_business (fact_type, business_id, category_id)
+SELECT 'category' AS fact_type,
+       business_id,
+       category_id
 FROM business_categories AS t1
          INNER JOIN dim_category AS t2
-                    ON t1.category = t2.category;
+                    ON t1.category = t2.category
+LIMIT 1000;
 
-INSERT INTO fact_attribute (business_id, key, value)
-SELECT business_id,
+-- Insertion des attributs
+INSERT INTO fact_business (fact_type, business_id, key, value)
+SELECT 'attribute' AS fact_type,
+       business_id,
        key,
        value
-FROM business_attributes;
-
-
--- example of query that uses multiple fact tables
--- SELECT dim_business.business_id,
---        t2.user_id,
---        t2.text,
---        t2.tip_date
--- FROM fact_tips
---          INNER JOIN dim_business ON fact_tips.business_id = dim_business.business_id
---          LEFT JOIN fact_tips AS t2 ON fact_tips.business_id = t2.business_id
--- LIMIT 100;
+FROM business_attributes
+LIMIT 1000;
