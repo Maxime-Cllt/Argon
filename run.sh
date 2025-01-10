@@ -1,22 +1,29 @@
 #!/bin/bash
 
-# creation de la base de données
-#touch argon.db
+if [ -f argon.db ]; then
+    echo "La base de données existe"
+else
+    echo "La base de données n'existe pas"
+    sqlite3 argon.db < sql/sqlite_config.sql
+fi
 
 # execution des scripts python
+echo "Execution des scripts python"
 python script/business_to_sqlite.py
-python script/checkin_to_sqlite.py
+python script/checkin_date_to_sqlite.py
 python script/tip_to_sqlite.py
 
 # execution des scripts sql
 echo "Nettoyage des données"
-sqlite3 argon.db < sql/clean/clean_tip.sql
-sqlite3 argon.db < sql/clean/clean_checkin_dates.sql
+sqlite3 argon.db < sql/transform/clean_tip.sql
+sqlite3 argon.db < sql/transform/clean_checkin_dates.sql
 
 echo "Création des tables"
-sqlite3 argon.db < sql/create_table/create_other_table.sql
+#sqlite3 argon.db < sql/load/creating_dim_tables.sql
+#sqlite3 argon.db < sql/load/load_in_dim_tables.sql.sql
 
-echo "Optimisation de la base de données"
-./script/SqliteCleaner argon.db
+echo "Nettoyage de la base de données"
+#sqlite3 argon.db < sql/load/cleanup.sql
+#./script/SqliteCleaner argon.db &
 
 exit 0

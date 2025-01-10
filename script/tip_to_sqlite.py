@@ -20,7 +20,9 @@ if __name__ == '__main__':
     print(f"Le DataFrame contient {num_lines_df} lignes.")
     print(f"Difference: {num_lines - num_lines_df} soit {num_lines_df * 100 / num_lines:.2f}%.")
 
-    conn = sqlite3.connect("../argon.db")
+    db_path = os.path.join(absolute_path, "argon.db")
+
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -46,4 +48,4 @@ if __name__ == '__main__':
 
     conn.close()
 
-    print("Données insérées avec succès dans la base SQLite3.")
+    print("yelp_academic_dataset_tip.csv inséré en base de données")

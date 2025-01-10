@@ -4,7 +4,7 @@
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="Pv-6bgilXGz2zJRjLQK--76" value="attributes" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=36.888888888888886;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;" vertex="1" parent="1">
+        <mxCell id="Pv-6bgilXGz2zJRjLQK--76" value="business_attributes" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=36.888888888888886;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;" vertex="1" parent="1">
           <mxGeometry x="230" y="70" width="240" height="155.88888888888889" as="geometry" />
         </mxCell>
         <mxCell id="Pv-6bgilXGz2zJRjLQK--77" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="Pv-6bgilXGz2zJRjLQK--76">
@@ -103,7 +103,7 @@
         <mxCell id="Pv-6bgilXGz2zJRjLQK--108" value="varchar(22) : business_id" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="Pv-6bgilXGz2zJRjLQK--105">
           <mxGeometry y="98.33333333333334" width="253" height="45" as="geometry" />
         </mxCell>
-        <mxCell id="Pv-6bgilXGz2zJRjLQK--109" value="hours" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30.105263157894736;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;" vertex="1" parent="1">
+        <mxCell id="Pv-6bgilXGz2zJRjLQK--109" value="business_hours" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30.105263157894736;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;" vertex="1" parent="1">
           <mxGeometry x="1070" y="20" width="224" height="278.10526315789474" as="geometry" />
         </mxCell>
         <mxCell id="Pv-6bgilXGz2zJRjLQK--110" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="Pv-6bgilXGz2zJRjLQK--109">

@@ -5,8 +5,9 @@ import sqlite3
 if __name__ == '__main__':
     absolute_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     file = os.path.join(absolute_path, "data/yelp_academic_dataset_checkin.json")
+    db_path = os.path.join(absolute_path, "argon.db")
 
-    conn = sqlite3.connect("../argon.db")
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -38,4 +39,4 @@ if __name__ == '__main__':
     conn.commit()
     conn.close()
 
-    print("Données insérées avec succès dans la base SQLite3.")
+    print("yelp_academic_dataset_checkin.json  inséré en base de données")
