@@ -2,13 +2,15 @@
   <h1>Argon</h1>
 </div>
 
+<div align="center">
+  <strong>Entrepôt de données pour la plateforme Yelp</strong>
+</div>
+
 ## 📄 Lien du Rapport
 
 Pour consulter le rapport complet, cliquez sur le lien ci-dessous :
 
 [Rapport](https://docs.google.com/document/d/1sLP6f43I187cvIch9RbBHyOVyccv67lUW4Wt1hDGoM4/edit?usp=sharing)
-
----
 
 ## 📝 Description
 
@@ -25,15 +27,11 @@ Cet entrepôt permet aux utilisateurs de :
 - Obtenir des réponses en temps réel grâce à des structures de données optimisées.
 - Faciliter les analyses pour des data analysts, data scientists et chercheurs.
 
----
-
 ## 🚀 Fonctionnalités
 
 - **Importation** : Ingestion des données de Yelp dans un entrepôt relationnel.
 - **Stockage** : Gestion des données dans une base de données relationnelle.
 - **Optimisation** : Création de vues matérialisées pour améliorer les performances des requêtes.
-
----
 
 ## 💻 Plateformes Compatibles
 
@@ -45,8 +43,6 @@ Argon est compatible avec les systèmes d'exploitation suivants :
   <img src="https://img.shields.io/badge/OS-Windows-informational?style=flat&logo=windows&logoColor=white&color=1e90ff" alt="Windows" />
 </div>
 
----
-
 ## 🛠️ Prérequis
 
 Avant de commencer, assurez-vous d’avoir les éléments suivants installés sur votre machine :
@@ -54,8 +50,6 @@ Avant de commencer, assurez-vous d’avoir les éléments suivants installés su
 - Python 3.12 ou supérieur
 - Sqlite3
 - Metabase
-
----
 
 ## Technologies
 

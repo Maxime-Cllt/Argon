@@ -71,10 +71,10 @@ CREATE TABLE dim_categories
 CREATE TABLE fact_business
 (
     fact_id      INTEGER PRIMARY KEY AUTOINCREMENT,
-    business_id  VARCHAR(22) NOT NULL,     -- Clé étrangère vers dim_business
+    business_id  VARCHAR(22) NOT NULL,  -- Clé étrangère vers dim_business
 --     amenagement_id INTEGER     DEFAULT NULL, -- Clé étrangère pour le lien avec un aménagement
 --     category_id  INTEGER     DEFAULT NULL, -- Clé étrangère pour le lien avec une catégorie
-    review_count INTEGER     DEFAULT 0,    -- Nombre d'avis
+    review_count INTEGER     DEFAULT 0, -- Nombre d'avis
     city         VARCHAR(43) DEFAULT NULL,
     postal_code  VARCHAR(8)  DEFAULT NULL
 );
