@@ -60,11 +60,11 @@ FROM business_parking;
 
 -- Remplissage de la table dim_tips
 INSERT INTO dim_tips (user_id, business_id, compliment_count, date)
-SELECT user_id,
-       business_id,
-       compliment_count,
-       date
-FROM tips;
+SELECT t1.user_id,
+       t1.business_id,
+       t1.compliment_count,
+    DATE (t1.date)
+FROM tips AS t1;
 
 
 -- Remplissage de la table dim_categories
@@ -97,6 +97,5 @@ INSERT INTO fact_tips (tips_id, user_id, business_id, stars, date);
 SELECT tips_id,
        user_id,
        business_id,
-       stars,
-       date
+       stars, date
 FROM tips;

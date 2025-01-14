@@ -57,8 +57,6 @@ CREATE TABLE dim_tips
     user_id          VARCHAR(22) NOT NULL,
     business_id      VARCHAR(22) NOT NULL,
     compliment_count INTEGER DEFAULT 0,
-    date             DATE    DEFAULT NULL,
---     FOREIGN KEY (user_id) REFERENCES dim_users (user_id),
     FOREIGN KEY (business_id) REFERENCES dim_business (business_id)
 );
 
