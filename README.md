@@ -80,7 +80,7 @@ git clone https://github.com/Maxime-Cllt/Argon.git
 cd Argon
 ```
 
-3. Installez les dépendances Python et executer le fichier run.sh
+3. Installez les dépendances Python et executer le fichier run.sh (Linux ou MacOS) :
 
 ```bash
 ./run.sh
