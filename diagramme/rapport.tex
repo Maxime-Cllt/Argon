@@ -7,15 +7,11 @@
 % Packages
 \usepackage{amsmath}
 
-\textbf{\begin{enumerate}
-            \item \chapter*{Résumé}
+\item \chapter*{Résumé}
 
-\end{enumerate}
 
-\begin{enumerate}
-    \item \chapter*{Introduction}
+\chapter*{Introduction}
 
-\end{enumerate}
 
 \section*{2.1 Contexte}
 Dans le cadre du module d’Informatique Décisionnelle du Master 2 BDIA, ce projet propose d’explorer et d’appliquer les concepts fondamentaux de la création et de l’exploitation d’un data warehouse, un élément clé dans les environnements décisionnels modernes. L’importance croissante des données massives a profondément transformé les processus de prise de décision des entreprises, les poussant à s’appuyer sur des analyses précises et des outils avancés pour rester compétitifs.
@@ -64,9 +60,7 @@ Nos analyses se concentrent sur les commerces, en mettant l'accent sur les facte
 
 \end{enumerate}
 
-\section*{3.1 Description des données disponibles
-
-}
+\section*{3.1 Description des données disponibles}
 Les données exploitées dans ce projet proviennent de la plateforme Yelp et sont organisées sous différents formats et sources. Elles offrent une vue détaillée des commerces, des utilisateurs et de leurs interactions. Voici une présentation des principales sources de données :
 
 
@@ -146,40 +140,56 @@ Arguments pour les schémas choisis en fonction des objectifs analytiques.
 
 Un ETL est un processus d’extraction, de transformation et de chargement des données dans un entrepôt de données. Il est essentiel pour garantir la qualité et la cohérence des données.
 
+Voici le schéma général de notre processus ETL :
+
+
 \subsection{5.1.1 Extraction des données}
 
-La partie extraction consiste à récupérer les données brutes à partir de différentes sources, telles que des fichiers CSV, des bases de données, des API, etc. Ces données sont ensuite stockées dans une zone de transit pour être traitées par la suite.
-Nous avons choisi d’utiliser le langage Python avec différentes librairies comme Pandas pour implémenter notre ETL.
-Nous avons opté pour cette solution en raison de sa simplicité et l'aisance que nous en avons grâce aux séances de l'UE Machine Learning et Deep Learning où nous avons utilisé Pandas pour manipuler des données dans des fichiers CSV et JSON.
-Via des scripts python qui ont été fait pour chaque fichier, notre but est de parser chaque fichier et d'insérer les données dans une base de données Sqlite.
+
+Nous avons choisi d’utiliser le langage Python avec différentes librairies comme Pandas pour implémenter notre ETL. Nous avons opté pour cette solution en raison de sa simplicité et l'aisance que nous avons grâce aux séances de l'UE Machine Learning et Deep Learning, où nous avons utilisé Pandas pour manipuler des données dans des fichiers CSV et JSON. 
+
+Via des scripts Python développés pour chaque fichier, nous avons extrait les données et les avons stockées dans une base de données SQLite.
+Ces scripts sont disponibles dans le dossier "/script" du projet.
+
+
+Le choix de SQLite s’est imposé pour plusieurs raisons. Tout d’abord, il s’agit d’une solution légère et intégrée qui ne nécessite aucune configuration complexe ni serveur dédié,
+ce qui simplifie le déploiement et la maintenance. Ensuite, SQLite est entièrement autonome et stocke les données dans un seul fichier, ce qui facilite grandement le transport et le
+partage de la base de données. Enfin, sa compatibilité avec la plupart des systèmes d’exploitation et son support natif dans Python en font une option pratique et efficace pour
+gérer les données du projet.
+Ici, SQLite est utilisé comme un entrepôt de données temporaire pour stocker les données brutes avant de les transformer et de les charger dans le data warehouse final.
+Nous voulons que les données soient stockées dans un format tabulaire pour faciliter leur manipulation et leur analyse ultérieure. SQLite offre une solution simple et efficace pour
+stocker des données structurées dans des tables relationnelles, ce qui en fait un choix idéal pour cette tâche.
+
+
+Voici un schéma de l'extraction des données et le schéma relationnel qui en découle :
 
 \subsection{5.1.2 Transformation des données}
 
-La transformation des données est une étape cruciale pour nettoyer, normaliser et enrichir les données brutes. Elle permet de les rendre cohérentes et exploitables pour l’analyse. Cette phase inclut des opérations telles que le filtrage, le tri, la jointure, l’agrégation, la déduplication, etc.
-Cette transformation est réalisée en utilisant des requêtes SQL pour manipuler les données dans la base de données Sqlite.
-Le choix d'opter pour une base de données SQLite est idéal pour ce type de tâche car il est rapide et performant pour des volumes modérés de données,tout en n'exigeant aucune infrastructure lourde.
-Il offre également une gestion de la consistance des données avec des transactions ACID, assurant une intégrité des données lors des transformations.
-Son gros avantage par rapport aux autres SGBD est qu'il est stocké dans un fichier, ce qui le rend facilement transportable et utilisable sur n'importe quel système d'exploitation.
-Ainsi, si pour une raison, nous voulons insérer les données dans un autre SGBD, nous pourrons le faire facilement.
-
-Via des fichiers SQL, nous avons implémenté les requêtes nécessaires pour transformer les données brutes en données exploitables pour l'analyse.
+La transformation des données est une étape cruciale pour nettoyer, normaliser et enrichir les données brutes.
+Elle permet de les rendre cohérentes et exploitables pour l’analyse. Cette phase inclut des opérations telles que le filtrage, le tri, la jointure, l’agrégation, la déduplication, etc.
+À travers des fichiers SQL, nous avons implémenté les requêtes nécessaires pour transformer les données brutes en un format directement exploitable pour l’analyse.
 
 \subsection{5.1.3 Chargement des données}
 
 La dernière étape de l’ETL consiste à charger les données transformées dans le data warehouse. Ces données sont stockées dans des tables spécifiques, prêtes à être
 analysées par des outils de business intelligence ou des applications d’analyse de données.
 
-Les données transformées sont chargées dans un SGBD Oracle, qui est un système de gestion de base de données relationnelle très performant et robuste. Il offre des fonctionnalités avancées pour l’analyse de données et la gestion des requêtes complexes.
+Les données transformées sont chargées dans un SGBD Oracle, qui est un système de gestion de
+base de données relationnelle très performant et robuste. Il offre des fonctionnalités avancées pour l’analyse de données et la gestion des requêtes complexes.
 
 
 \section*{5.2 Processus d’intégration}
 
+Le processus d’intégration consiste à combiner les données provenant de différentes sources et à les stocker dans un entrepôt de données centralisé.
+Cela permet de disposer d’une vue unifiée et cohérente des informations, facilitant leur analyse et leur exploitation.
+
 
 \section{5.3 Problèmes rencontrés et solutions apportées}
 
+Dans cette section, nous décrivons les problèmes rencontrés lors de l’extraction et de la transformation des données, ainsi que les solutions mises en place pour les résoudre.
+
 \subsection{5.3.1 Problèmes rencontrés lors de l'extraction des données}
 
-Lors de l'extraction des données, notre problème principal à été de parser chaque fichier et d'insérer les données dans une base de données Sqlite.
 
 \subsubsection{5.3.1.1 Fichier JSON}
 
@@ -203,7 +213,7 @@ Ce nombre de lignes est suffisant pour effectuer des analyses pertinentes et sig
 
 Lors de la transformation des données, notre problème principal à été de nettoyer et de normaliser les données brutes pour les rendre cohérentes et exploitables pour l’analyse.
 Cela implique de comprendre nos données et leurs caractéristiques.
-Pour cela, nous avons exploré nos données en utilisant des requêtes SQL sur notre base de données Sqlite.
+Pour cela, nous avons exploré nos données en utilisant des requêtes SQL sur notre base de données.
 
 \subsubsection{5.3.2.1 Fichier CSV}
 
@@ -221,7 +231,9 @@ FROM tips
 WHERE length(business_id) != 22
 OR business_id GLOB '* *'
 OR length(user_id) != 22
-OR user_id GLOB '* *';
+OR user_id GLOB '* *'
+OR user_id IS NULL
+OR business_id IS NULL;
 \end{verbatim}
 
 On supprime donc les lignes qui ne respectent pas ces conditions et on est sûr que les données restantes sont cohérentes.
@@ -231,7 +243,8 @@ On supprime donc les lignes qui ne respectent pas ces conditions et on est sûr 
 \begin{verbatim}
 DELETE
 FROM tips
-WHERE compliment_count GLOB '*[^0-9]*';
+WHERE compliment_count GLOB '*[^0-9]*'
+OR compliment_count IS NULL;
 \end{verbatim}
 
 \item Colonne "date" : Cette colonne doit contenir des dates au format DATETIME. On supprime donc les lignes qui ne respectent pas ces conditions avec la requête suivante :
@@ -240,7 +253,8 @@ WHERE compliment_count GLOB '*[^0-9]*';
 DELETE
 FROM tips
 WHERE length(date) != 19
-OR date NOT GLOB '????-??-?? ??:??:??';;
+OR date NOT GLOB '????-??-?? ??:??:??'
+OR date IS NULL;
 \end{verbatim}
 
 
@@ -249,16 +263,18 @@ Voici le tableau qui résume les données avant et après le nettoyage :
 \begin{center}
 \begin{tabular}{|c|c|c|}
 \hline
-Etape & Nombre de lignes & Pourcentage de lignes conservées \\
+Etape \& Nombre de lignes \\& Pourcentage de lignes conservées \\
 \hline
-Fichier brut & 1375578 & 100\% \\
+Fichier brut \& 1375578 \& 100\% \\
 \hline
-Insertion & 1317335 & 95,76592531\% \\
+Insertion \& 1317335 \& 95,76592531\% \\
 \hline
-Nettoyage & 1315972 & 95,66683968\% \\
+Nettoyage \& 1315972 \& 95,66683968\% \\
 \hline
 \end{tabular}
 \end{center}
+
+Nous trouvons que le pourcentage de lignes conservées entre le fichier brut et le fichier nettoyé reste suffisamment élevé pour effectuer des analyses pertinentes et significatives.
 
 
 \subsubsection{5.3.2.2 Fichier JSON}
@@ -274,7 +290,6 @@ Pour les fichiers "yelp_academic_dataset_business.json" et "yelp_academic_datase
 
 \begin{itemize}
 \item 5.1 Construction des Data Marts
-Création des sous-ensembles de données spécifiques à des analyses.
 
 
 \item 5.2 Requêtes et agrégations

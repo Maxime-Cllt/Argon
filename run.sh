@@ -15,6 +15,7 @@ python script/tip_to_sqlite.py
 
 # execution des scripts sql
 echo "Nettoyage des données"
+sqlite3 argon.db < sql/transform/clean_business.sql
 sqlite3 argon.db < sql/transform/clean_tip.sql
 sqlite3 argon.db < sql/transform/clean_checkin_dates.sql
 
