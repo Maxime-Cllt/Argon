@@ -56,6 +56,7 @@ CREATE TABLE dim_tips
     user_id          VARCHAR(22) NOT NULL,
     business_id      VARCHAR(22) NOT NULL,
     compliment_count INTEGER  DEFAULT NULL,
+    text             TEXT     DEFAULT NULL,
     date             DATETIME DEFAULT NULL,
     FOREIGN KEY (business_id) REFERENCES dim_business (business_id)
 );

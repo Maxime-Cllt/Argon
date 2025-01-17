@@ -59,10 +59,11 @@ SELECT business_id,
 FROM business_parking;
 
 -- Remplissage de la table dim_tips
-INSERT INTO dim_tips (user_id, business_id, compliment_count, date)
+INSERT INTO dim_tips (user_id, business_id, compliment_count, text, date)
 SELECT t1.user_id,
        t1.business_id,
        t1.compliment_count,
+       t1.text,
        DATE(t1.date)
 FROM tips AS t1;
 
