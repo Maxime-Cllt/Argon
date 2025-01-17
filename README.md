@@ -12,6 +12,13 @@ Pour consulter le rapport complet, cliquez sur le lien ci-dessous :
 
 [Rapport](https://docs.google.com/document/d/1sLP6f43I187cvIch9RbBHyOVyccv67lUW4Wt1hDGoM4/edit?usp=sharing)
 
+## 🌐 Lien du Dashboard
+
+Pour accéder au dashboard Metabase, cliquez sur le lien ci-dessous :
+
+[Dashboard](http://localhost:3000/)
+
+
 ## 📝 Description
 
 **Argon** est un entrepôt de données conçu pour exploiter les données de la plateforme Yelp, un site web populaire

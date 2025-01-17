@@ -84,7 +84,7 @@ if __name__ == '__main__':
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
 
-        drop_tables(cursor)
+        # drop_tables(cursor)
 
         create_tables(cursor)
 
@@ -158,7 +158,6 @@ if __name__ == '__main__':
 
         conn.commit()
         conn.close()
-        cursor.close()
 
         print("yelp_academic_dataset_business.json inséré en base de données")
 

@@ -63,7 +63,7 @@ INSERT INTO dim_tips (user_id, business_id, compliment_count, date)
 SELECT t1.user_id,
        t1.business_id,
        t1.compliment_count,
-    DATE (t1.date)
+       DATE(t1.date)
 FROM tips AS t1;
 
 
@@ -74,28 +74,14 @@ FROM business_attributes
 GROUP BY key;
 
 -- Remplissage de la table fact_business
-INSERT INTO fact_business (business_id, review_count, city, postal_code)
-SELECT t1.business_id,
-       review_count,
-       city,
-       postal_code
-FROM business AS t1
-         INNER JOIN business_attributes AS t2 ON t1.business_id = t2.business_id;
-
-
--- Remplissage de la table fact_business
-INSERT INTO fact_categories (business_id, category_id, value)
+INSERT INTO fact_business (business_id, category_id, review_count, city, postal_code, state, value)
 SELECT t1.business_id,
        t3.category_id,
-       value
+       t1.review_count,
+       t1.city,
+       t1.postal_code,
+       t1.state,
+       t2.value
 FROM business AS t1
          INNER JOIN business_attributes AS t2 ON t1.business_id = t2.business_id
-         INNER JOIN dim_categories AS t3 ON t2.key = t3.category;
-
--- Remplissage de la table fact_tips
-INSERT INTO fact_tips (tips_id, user_id, business_id, stars, date);
-SELECT tips_id,
-       user_id,
-       business_id,
-       stars, date
-FROM tips;
+         LEFT JOIN dim_categories AS t3 ON t2.key = t3.category;

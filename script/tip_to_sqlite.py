@@ -48,7 +48,6 @@ if __name__ == '__main__':
         df.to_sql("tips", conn, if_exists="replace", index=False)
 
         conn.close()
-        cursor.close()
 
         print("yelp_academic_dataset_tip.csv inséré en base de données")
     except Exception as e:
