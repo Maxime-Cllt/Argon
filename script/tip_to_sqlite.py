@@ -7,7 +7,8 @@ if __name__ == '__main__':
     try:
         absolute_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
-        file = os.path.join(absolute_path, "data/yelp_academic_dataset_tip.csv")
+        nom_fichier = "yelp_academic_dataset_tip.csv"
+        file = os.path.join(absolute_path, "data", nom_fichier)
 
         # compter le nombre de lignes dans le fichier
         with open(file) as f:
@@ -49,14 +50,11 @@ if __name__ == '__main__':
 
         conn.close()
 
-        print("yelp_academic_dataset_tip.csv inséré en base de données")
+        print(f"{nom_fichier} a été importé avec succès en bd.")
     except Exception as e:
 
         if conn is not None:
             conn.close()
-
-        if cursor is not None:
-            cursor.close()
 
         print(e)
         raise e

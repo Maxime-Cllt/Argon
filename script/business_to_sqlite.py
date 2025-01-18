@@ -77,14 +77,15 @@ def create_tables(cursor):
 
 if __name__ == '__main__':
     try:
+        nom_fichier = "yelp_academic_dataset_business.json"
         absolute_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-        file = os.path.join(absolute_path, "data/yelp_academic_dataset_business.json")
+        file = os.path.join(absolute_path, "data", nom_fichier)
         db_path = os.path.join(absolute_path, "argon.db")
 
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
 
-        # drop_tables(cursor)
+        drop_tables(cursor)
 
         create_tables(cursor)
 
@@ -159,13 +160,10 @@ if __name__ == '__main__':
         conn.commit()
         conn.close()
 
-        print("yelp_academic_dataset_business.json inséré en base de données")
+        print(f"{nom_fichier} a été importé avec succès en bd.")
 
     except Exception as e:
         print(e)
 
         if conn:
             conn.close()
-
-        if cursor:
-            cursor.close()
