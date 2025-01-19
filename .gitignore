@@ -47,3 +47,4 @@ gradle
 .idea
 data
 argon.db
+*.log
