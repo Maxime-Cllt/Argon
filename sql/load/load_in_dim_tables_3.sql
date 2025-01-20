@@ -1,13 +1,15 @@
 -- Remplissage de la table dim_business
-INSERT INTO dim_business (business_id, name, address, city, state, postal_code, review_count)
-SELECT business_id,
-       name,
-       address,
-       city,
-       state,
-       postal_code,
-       review_count
-FROM business;
+INSERT INTO dim_business (business_id, name, address, city, state, postal_code, review_count, checkin_count)
+SELECT t1.business_id,
+       t1.name,
+       t1.address,
+       t1.city,
+       t1.state,
+       t1.postal_code,
+       t1.review_count,
+       COUNT(t2.date)
+FROM business AS t1
+         INNER JOIN checkin_date AS t2 ON t1.business_id = t2.business_id;
 
 -- Remplissage de la table dim_hours
 INSERT INTO dim_hours (hours)

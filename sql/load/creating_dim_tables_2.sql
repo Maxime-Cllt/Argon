@@ -11,13 +11,14 @@ DROP TABLE IF EXISTS fact_categories;
 
 CREATE TABLE dim_business
 (
-    business_id  VARCHAR(22) PRIMARY KEY,
-    name         VARCHAR(64)  DEFAULT NULL,
-    address      VARCHAR(118) DEFAULT NULL,
-    city         VARCHAR(43)  DEFAULT NULL,
-    state        VARCHAR(3)   DEFAULT NULL,
-    postal_code  VARCHAR(8)   DEFAULT NULL,
-    review_count INTEGER      DEFAULT NULL
+    business_id   VARCHAR(22) PRIMARY KEY,
+    name          VARCHAR(64)  DEFAULT NULL,
+    address       VARCHAR(118) DEFAULT NULL,
+    city          VARCHAR(43)  DEFAULT NULL,
+    state         VARCHAR(3)   DEFAULT NULL,
+    postal_code   VARCHAR(8)   DEFAULT NULL,
+    review_count  INTEGER      DEFAULT NULL,
+    checkin_count INTEGER      DEFAULT NULL
 );
 
 CREATE TABLE dim_hours

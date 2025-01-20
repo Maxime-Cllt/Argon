@@ -10,7 +10,7 @@ fi
 # execution des scripts python
 echo "Execution des scripts python"
 python script/business_to_sqlite.py
-#python script/checkin_date_to_sqlite.py
+python script/checkin_date_to_sqlite.py
 python script/tip_to_sqlite.py
 python script/user_to_sqlite.py
 
@@ -28,5 +28,8 @@ echo "Création des data marts et des tables de dimension"
 echo "Nettoyage de la base de données"
 #sqlite3 argon.db < sql/load/cleanup_tables_4.sql
 #./script/SqliteCleaner argon.db &
+
+
+echo "Fin du script"
 
 exit 0
