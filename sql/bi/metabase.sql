@@ -1,12 +1,17 @@
+-- Les 200 business avec le plus de compliments
 SELECT t1.name,
        AVG(t2.compliment_count) AS avg_compliment_count,
-       t1.city
+       t1.city,
+       t1.state
 FROM dim_business AS t1
          INNER JOIN dim_tips AS t2
                     ON t1.business_id = t2.business_id
+WHERE t2.compliment_count > 0
+  AND t2.compliment_count IS NOT NULL
 GROUP BY t1.business_id
 ORDER BY avg_compliment_count DESC
-LIMIT 100;
+LIMIT 200;
+
 
 -- Les 20 villes avec le plus de business
 WITH RankedCities AS (SELECT city,
@@ -20,6 +25,18 @@ FROM RankedCities
 WHERE rank <= 20
 ORDER BY rank;
 
+
+-- Les villes qui donnent en moyenne le plus de compliments
+SELECT t1.city,
+       AVG(t2.compliment_count) AS avg_compliment_count
+FROM dim_business AS t1
+         INNER JOIN dim_tips AS t2
+                    ON t1.business_id = t2.business_id
+WHERE t2.compliment_count > 0
+  AND t2.compliment_count IS NOT NULL
+GROUP BY t1.city
+ORDER BY avg_compliment_count DESC
+LIMIT 50;
 
 -- Les heures d'ouverture les plus communes sur une semaine
 SELECT h.hours  AS common_hours,
@@ -108,3 +125,26 @@ WHERE id_hours_monday = 1
   AND id_hours_friday = 1
   AND id_hours_saturday = 1
   AND id_hours_sunday = 1;
+
+
+-- Les states qui font en moyenne le plus de checkins
+SELECT t1.state,
+       AVG(t2.checkin_count) AS avg_checkin_count
+FROM fact_business AS t1
+         INNER JOIN dim_business AS t2
+                    ON t1.business_id = t2.business_id
+WHERE t2.checkin_count > 0
+GROUP BY t1.state
+ORDER BY avg_checkin_count DESC;
+
+
+-- Les préférences de catégories par ville
+SELECT t1.city,
+       t2.category,
+       COUNT(t2.category_id) AS count_category
+FROM fact_business AS t1
+         INNER JOIN dim_categories AS t2
+                    ON t1.category_id = t2.category_id
+WHERE t1.category_id IS NOT NULL
+GROUP BY t1.city
+ORDER BY count_category DESC;

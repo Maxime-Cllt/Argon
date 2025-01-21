@@ -7,9 +7,14 @@ SELECT t1.business_id,
        t1.state,
        t1.postal_code,
        t1.review_count,
-       COUNT(t2.date)
+       COUNT(t2.date) AS checkin_count
 FROM business AS t1
-         INNER JOIN checkin_date AS t2 ON t1.business_id = t2.business_id;
+         LEFT JOIN
+     checkin_date AS t2
+     ON
+         t1.business_id = t2.business_id
+GROUP BY t1.business_id;
+
 
 -- Remplissage de la table dim_hours
 INSERT INTO dim_hours (hours)
