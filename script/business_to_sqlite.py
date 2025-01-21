@@ -97,7 +97,7 @@ if __name__ == '__main__':
 
         create_tables(cursor)
 
-        with open(file, "r") as file:
+        with open(file, "r", encoding="utf-8") as file:
             for line in file:
                 data = json.loads(line.strip())
                 business_id = data.get("business_id")
@@ -171,7 +171,7 @@ if __name__ == '__main__':
         print(f"{nom_fichier} a été importé avec succès en bd.")
 
     except Exception as e:
-        print(e)
+        print("Erreur lors de l'importation du fichier", e)
 
         if conn:
             conn.close()

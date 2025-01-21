@@ -11,12 +11,12 @@ if __name__ == '__main__':
         file = os.path.join(absolute_path, "data", nom_fichier)
 
         # compter le nombre de lignes dans le fichier
-        with open(file) as f:
+        with open(file, "r", encoding='utf-8') as f:
             num_lines = sum(1 for line in f)
 
         print(f"Le fichier contient {num_lines} lignes.")
 
-        df = pd.read_csv(file, on_bad_lines='skip')
+        df = pd.read_csv(file, on_bad_lines='skip',encoding='utf-8')
 
         num_lines_df = df.shape[0]
         print(f"Le DataFrame contient {num_lines_df} lignes.")
@@ -54,8 +54,4 @@ if __name__ == '__main__':
 
         print(f"{nom_fichier} a été importé avec succès en bd.")
     except Exception as e:
-
-        if conn is not None:
-            conn.close()
-
         print(e)
