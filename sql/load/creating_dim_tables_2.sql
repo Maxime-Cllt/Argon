@@ -37,7 +37,14 @@ CREATE TABLE dim_business_hours
     id_hours_friday    INTEGER DEFAULT NULL,
     id_hours_saturday  INTEGER DEFAULT NULL,
     id_hours_sunday    INTEGER DEFAULT NULL,
-    FOREIGN KEY (business_id) REFERENCES dim_business (business_id)
+    FOREIGN KEY (business_id) REFERENCES dim_business (business_id),
+    FOREIGN KEY (id_hours_monday) REFERENCES dim_hours (id_hours),
+    FOREIGN KEY (id_hours_tuesday) REFERENCES dim_hours (id_hours),
+    FOREIGN KEY (id_hours_wednesday) REFERENCES dim_hours (id_hours),
+    FOREIGN KEY (id_hours_thursday) REFERENCES dim_hours (id_hours),
+    FOREIGN KEY (id_hours_friday) REFERENCES dim_hours (id_hours),
+    FOREIGN KEY (id_hours_saturday) REFERENCES dim_hours (id_hours),
+    FOREIGN KEY (id_hours_sunday) REFERENCES dim_hours (id_hours)
 );
 
 CREATE TABLE dim_amenagement

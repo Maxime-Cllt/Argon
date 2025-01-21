@@ -27,11 +27,14 @@ if __name__ == '__main__':
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
 
-        cursor.execute("""
-        DROP TABLE IF EXISTS dim_users
-        """)
+        try:
+            cursor.execute("""
+            DROP TABLE IF EXISTS dim_users
+            """)
+            conn.commit()
+        except Exception as e:
+            print(e)
 
-        conn.commit()
 
         cursor.execute("""
         CREATE TABLE dim_users
@@ -68,9 +71,6 @@ if __name__ == '__main__':
         print(f"{nom_fichier} a été importé avec succès en bd.")
 
     except Exception as e:
-
         if conn is not None:
             conn.close()
-
         print(e)
-        raise e

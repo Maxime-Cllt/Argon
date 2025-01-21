@@ -5,12 +5,20 @@ import sqlite3
 
 
 def drop_tables(cursor):
-    cursor.execute("DROP TABLE IF EXISTS business")
-    cursor.execute("DROP TABLE IF EXISTS business_hours")
-    cursor.execute("DROP TABLE IF EXISTS business_attributes")
-    cursor.execute("DROP TABLE IF EXISTS business_parking")
-    cursor.execute("DROP TABLE IF EXISTS business_categories")
-    conn.commit()
+    sql_list = [
+        "DROP TABLE IF EXISTS business",
+        "DROP TABLE IF EXISTS business_hours",
+        "DROP TABLE IF EXISTS business_attributes",
+        "DROP TABLE IF EXISTS business_parking",
+        "DROP TABLE IF EXISTS business_categories"
+    ]
+
+    for sql in sql_list:
+        try:
+            cursor.execute(sql)
+            conn.commit()
+        except Exception as e:
+            print("Erreur lors de la suppression des tables", e)
 
 
 def create_tables(cursor):

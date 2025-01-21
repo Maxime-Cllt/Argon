@@ -27,11 +27,13 @@ if __name__ == '__main__':
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
 
-        cursor.execute("""
-        DROP TABLE IF EXISTS tips
-        """)
-
-        conn.commit()
+        try:
+            cursor.execute("""
+            DROP TABLE IF EXISTS tips
+            """)
+            conn.commit()
+        except Exception as e:
+            print(e)
 
         cursor.execute("""
         CREATE TABLE tips (
@@ -57,4 +59,3 @@ if __name__ == '__main__':
             conn.close()
 
         print(e)
-        raise e

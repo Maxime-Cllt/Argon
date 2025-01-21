@@ -1,19 +1,9 @@
-%! Author = maximecolliat
-%! Date = 09/01/2025
-
-% Preamble
-\documentclass[11pt]{article}
-
-% Packages
-\usepackage{amsmath}
-
-\item \chapter*{Résumé}
+\section*{Résumé}
 
 
-\chapter*{Introduction}
+\section*{Introduction}
 
-
-\section*{2.1 Contexte}
+\subsection{Contexte}\label{subsec:contexte}
 Dans le cadre du module d’Informatique Décisionnelle du Master 2 BDIA, ce projet propose d’explorer et d’appliquer les concepts fondamentaux de la création et de l’exploitation d’un data warehouse, un élément clé dans les environnements décisionnels modernes. L’importance croissante des données massives a profondément transformé les processus de prise de décision des entreprises, les poussant à s’appuyer sur des analyses précises et des outils avancés pour rester compétitifs.
 
 Dans ce contexte, ce projet simule des problématiques réelles rencontrées par des analystes, des décideurs ou des responsables d’entreprise souhaitant exploiter des données volumineuses pour identifier des tendances, formuler des prévisions ou optimiser leurs opérations. Les données proviennent de l’application Yelp, une plateforme reconnue qui regroupe des millions d’avis d’utilisateurs sur divers commerces. 
@@ -27,26 +17,9 @@ L’objectif principal de ce projet est de construire un système décisionnel c
 
 \begin{enumerate}
 \item La modélisation d’un data warehouse adapté aux besoins analytiques identifiés, en choisissant entre des approches méthodologiques reconnues (Kimball ou Inmon).
-
-
-\end{enumerate}
-
-\begin{enumerate}
 \item La conception et la mise en œuvre d’un processus ETL pour intégrer des données provenant de multiples formats et sources, tout en assurant leur cohérence et leur disponibilité pour l’analyse.
-
-
-\end{enumerate}
-
-\begin{enumerate}
 \item L’élaboration de requêtes analytiques pertinentes, permettant d'explorer les données et de répondre à des questions stratégiques, telles que l’identification des commerces les mieux évalués ou la segmentation des utilisateurs selon leurs préférences.
-
-
-\end{enumerate}
-
-\begin{enumerate}
 \item La création de tableaux de bord interactifs et intuitifs, permettant de synthétiser les résultats et de les communiquer efficacement à un public non technique.
-
-
 \end{enumerate}
 
 Pour la conception de notre data warehouse, nommé “Argon” en référence à l’élément chimique réputé pour sa stabilité et sa résistance, nous avons visé une architecture robuste et performante. Ce nom symbolise un système capable de centraliser et protéger les données tout en offrant une grande efficacité pour les analyses. Inspirée des propriétés de l’argon, notre conception met l’accent sur la simplicité, l’optimisation des performances, et l’isolation des composants pour garantir flexibilité et résilience face aux évolutions des données. 
@@ -55,10 +28,8 @@ Pour la conception de notre data warehouse, nommé “Argon” en référence à
 Nos analyses se concentrent sur les commerces, en mettant l'accent sur les facteurs clés qui influencent leur implantation et leur succès dans différents lieux, en exploitant les données géographiques, les avis utilisateurs et les caractéristiques spécifiques des établissements.
 
 
-\begin{enumerate}
-\item \chapter*{Analyse du sujet et des données}
+\chapter*{Analyse du sujet et des données}
 
-\end{enumerate}
 
 \section*{3.1 Description des données disponibles}
 Les données exploitées dans ce projet proviennent de la plateforme Yelp et sont organisées sous différents formats et sources. Elles offrent une vue détaillée des commerces, des utilisateurs et de leurs interactions. Voici une présentation des principales sources de données :
@@ -97,44 +68,63 @@ La base de données PostgreSQL contient plusieurs tables liées aux utilisateurs
 
 
 \end{itemize}
+
 Voici le diagramme relationnel de ce schéma de base de données :
-
-
 
 \section*{3.2 Analyse des besoins}
 
-Identification des questions clés à résoudre (exemples fournis dans le document).
+Pour répondre aux besoins des utilisateurs finaux, nous avons identifié plusieurs cas d’usage et scénarios d’analyse qui nécessitent des requêtes complexes et des agrégations de données.
+Voici quelques exemples de questions auxquelles nous souhaitons répondre :
+
+\begin{itemize}
+\item Quels sont les 20 villes avec le plus de commerces ?
+\item Quels sont les heures d'ouverture les plus communes sur une semaine ?
+\item Quels sont les heures d'ouverture les plus communes par jour de la semaine ?
+\item Combien de business sont ouverts 24h/24 7j/7 ?
+\item Quels sont les attributs les plus courants des commerces ?
+\end{itemize}
+
+Ces questions nous permettront de mieux comprendre les tendances et les caractéristiques des commerces, ainsi que les préférences des utilisateurs. Elles guideront la conception de notre data warehouse et l’élaboration des requêtes analytiques.
 
 
 \section*{3.3 Définition des objectifs analytiques}
 
-Objectifs à atteindre et cas d’usage envisagés.
+Sur la base des besoins identifiés, nous avons défini les objectifs analytiques suivants :
 
+\begin{itemize}
+\item Identifier les villes les plus attractives pour les commerces, en fonction de leur densité et de leur popularité.
+\item Analyser les horaires d’ouverture les plus courants des commerces, pour optimiser leur disponibilité et leur visibilité.
+\item Étudier les attributs les plus fréquents des commerces, pour identifier les services les plus recherchés par les utilisateurs.
+\end{itemize}
 
-\begin{enumerate}
-\item \chapter*{Conception du Data Warehouse}
+Nous pensons que ces analyses permettront de mieux comprendre les tendances et les préférences des utilisateurs, ainsi que les caractéristiques des commerces les plus populaires. Ces informations peuvent être utiles pour les propriétaires d’établissements, les gestionnaires de franchises ou les analystes de marché qui souhaitent optimiser leurs stratégies commerciales et leur présence en ligne.
+Par exemple, en identifiant les villes les plus attractives, les commerçants peuvent cibler leurs efforts de marketing et d’expansion pour maximiser leur visibilité et leur rentabilité. De même, en analysant les horaires d’ouverture les plus courants, ils peuvent ajuster leurs plages horaires pour répondre aux besoins de leur clientèle et augmenter leur fréquentation.
 
-\end{enumerate}
+\chapter*{Conception du Data Warehouse}
+
 
 \section*{4.1 Approche méthodologique}
-Kimball
 
+Pour la conception de notre data warehouse, nous avons choisi d’adopter l'approche de Kimball, qui privilégie une modélisation orientée métier et centrée sur les besoins des utilisateurs finaux.
+Cette approche se distingue par sa simplicité, sa flexibilité et sa capacité à s’adapter aux évolutions des données et des besoins analytiques.
+Elle repose sur des concepts clés tels que les faits, les dimensions, les grains de granularité et les schémas en étoile ou en flocon.
+
+Nous avons opté pour un schéma en étoile pour notre data warehouse, en raison de sa simplicité et de sa facilité d’utilisation pour les analyses multidimensionnelles.
+Ce schéma est composé d’une table de faits centrale, entourée de tables de dimensions qui décrivent les contextes et les attributs des données.
+Cette structure en étoile permet de simplifier les requêtes et d’optimiser les performances des analyses.
+L'approche de Inmon, qui privilégie une modélisation normalisée et une intégration des données en amont, aurait pu être une alternative, mais nous avons préféré la flexibilité et la simplicité offertes par le schéma en étoile.
+Notre conception prend en compte une evolution future des besoins et des données, en permettant l’ajout de nouvelles dimensions ou de nouveaux faits sans impacter l’existant.
 
 \section*{4.2 Spécifications des schémas}
 
-Schéma étoile, flocon ou constellation. Présentation des tables de faits et des dimensions.
+Voici notre schéma en étoile pour le data warehouse “Argon” :
 
 
-\section*{4.3 Justifications des choix techniques
-
-}
-Arguments pour les schémas choisis en fonction des objectifs analytiques.
+\section*{4.3 Justifications des choix techniques}
 
 
-\begin{enumerate}
-\item \chapter*{Intégration des données}
+\chapter*{Intégration des données}
 
-\end{enumerate}
 
 \section*{5.1 Architecture de l’ETL}
 
@@ -282,13 +272,8 @@ Nous trouvons que le pourcentage de lignes conservées entre le fichier brut et 
 Pour les fichiers "yelp_academic_dataset_business.json" et "yelp_academic_dataset_checkin.json", nous n'avons pas trouvé de problèmes particuliers, les données étaient déjà bien structurées et cohérentes.
 
 
-\begin{enumerate}
-\item \chapter*{Analyse et interrogation des données}
+\chapter*{Analyse et interrogation des données}
 
-\end{enumerate}
-
-
-\begin{itemize}
 \item 5.1 Construction des Data Marts
 
 
@@ -300,14 +285,12 @@ Requêtes SQL exécutées, cubes analytiques, et résultats obtenus.
 Mesure des temps d’exécution et suggestions d’amélioration.
 
 
-\end{itemize}
 
-\begin{enumerate}
-\item \chapter*{Présentation des résultats}
 
-\end{enumerate}
 
-\begin{itemize}
+\chapter*{Présentation des résultats}
+
+
 \item 6.1 Tableaux de bord et visualisations
 Utilisation de Metabase pour créer des dashboards et visualisations.
 
@@ -316,13 +299,9 @@ Utilisation de Metabase pour créer des dashboards et visualisations.
 Interprétation des résultats, insights pour les utilisateurs finaux.
 
 
-\end{itemize}
 
-\begin{enumerate}
-\item \chapter*{Documentation technique}
+\chapter*{Documentation technique}
 
-\end{enumerate}
-\begin{itemize}
 \item 8.1 Instructions pour la compilation et l’exécution du code
 Procédure détaillée.
 
@@ -331,24 +310,8 @@ Procédure détaillée.
 Bibliothèques utilisées, versions des outils, etc.
 
 
-\end{itemize}
 
-\begin{enumerate}
-\item \chapter*{Bilan}
-
-\end{enumerate}
-
-\begin{itemize}
-\item Résumé des contributions principales du projet.
+\chapter*{Bilan}
 
 
-\item Perspectives pour des développements futurs.
-
-
-\end{itemize}
-
-\begin{enumerate}
-\item \chapter*{Annexes}
-
-\end{enumerate}
-}
+\chapter*{Annexes}

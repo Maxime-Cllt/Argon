@@ -10,9 +10,13 @@ if __name__ == '__main__':
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
-    cursor.execute("""
-    DROP TABLE IF EXISTS checkin_date
-    """)
+    try:
+        cursor.execute("""
+        DROP TABLE IF EXISTS checkin_date
+        """)
+        conn.commit()
+    except Exception as e:
+        print(e)
 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS checkin_date (
@@ -24,6 +28,11 @@ if __name__ == '__main__':
 
     conn.commit()
 
+    prepared_statement = """
+    INSERT INTO checkin_date (business_id, date)
+    VALUES (?, ?)
+    """
+
     with open(file, "r") as file:
         for line in file:
             data = json.loads(line.strip())
@@ -31,10 +40,7 @@ if __name__ == '__main__':
             dates = data.get("date", "").split(", ")
 
             for date in dates:
-                cursor.execute("""
-                INSERT INTO checkin_date (business_id, date)
-                VALUES (?, ?)
-                """, (business_id, date))
+                cursor.execute(prepared_statement, (business_id, date))
 
     conn.commit()
     conn.close()
