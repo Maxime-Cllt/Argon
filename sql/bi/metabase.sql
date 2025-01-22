@@ -138,13 +138,43 @@ GROUP BY t1.state
 ORDER BY avg_checkin_count DESC;
 
 
--- Les préférences de catégories par ville
+-- Les catégories les plus communes par ville
 SELECT t1.city,
-       t2.category,
-       COUNT(t2.category_id) AS count_category
+       t2.category
 FROM fact_business AS t1
          INNER JOIN dim_categories AS t2
                     ON t1.category_id = t2.category_id
 WHERE t1.category_id IS NOT NULL
-GROUP BY t1.city
+  AND t2.category != 'Categorie'
+  AND length(t2.category) > 0
+  AND length(t1.city) > 0
+GROUP BY t1.city;
+
+
+-- Les catégories les plus communes à Las Vegas
+SELECT t2.category,
+       t2.category_id AS count_category
+FROM fact_business AS t1
+         INNER JOIN dim_categories AS t2
+                    ON t1.category_id = t2.category_id
+WHERE t1.category_id IS NOT NULL
+  AND t1.city = 'Las Vegas'
+  AND t2.category != 'Categorie'
+GROUP BY count_category
 ORDER BY count_category DESC;
+
+
+-- Les catégories qui plaisent le plus
+SELECT c.category,
+       SUM(t.compliment_count) AS total_compliments
+FROM dim_tips t
+         JOIN
+     fact_business b ON t.business_id = b.business_id
+         JOIN
+     dim_categories c ON b.category_id = c.category_id
+WHERE c.category != 'Categorie'
+  AND t.compliment_count IS NOT NULL
+  AND c.category IS NOT NULL
+  AND t.compliment_count > 0
+GROUP BY c.category
+ORDER BY total_compliments DESC;
