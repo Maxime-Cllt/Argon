@@ -1,4 +1,5 @@
 -- A EXECUTER APRES LES AUTRES SCRIPTS DE CLEAN
+PRAGMA temp_store = MEMORY;
 
 
 -- Fusion de la table business_categories avec la table business_attributes

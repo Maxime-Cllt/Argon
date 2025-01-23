@@ -53,6 +53,7 @@ FROM dim_business_hours bh
              OR h.id_hours = bh.id_hours_saturday
              OR h.id_hours = bh.id_hours_sunday
 WHERE length(h.hours) > 0
+AND h.hours NOT IN ('0:0-0:0')
 GROUP BY h.hours
 ORDER BY frequency DESC;
 

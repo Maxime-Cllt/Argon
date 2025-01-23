@@ -1,4 +1,3 @@
-PRAGMA temp_store = MEMORY;
 DROP TABLE IF EXISTS dim_business;
 DROP TABLE IF EXISTS dim_business_attributes;
 DROP TABLE IF EXISTS dim_business_hours;
@@ -24,7 +23,7 @@ CREATE TABLE dim_business
 
 CREATE TABLE dim_hours
 (
-    id_hours INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_hours SERIAL PRIMARY KEY,
     hours    VARCHAR(20) DEFAULT NULL
 );
 
@@ -61,24 +60,24 @@ CREATE TABLE dim_amenagement
 
 CREATE TABLE dim_tips
 (
-    tips_id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    tips_id          SERIAL PRIMARY KEY,
     user_id          VARCHAR(22) NOT NULL,
     business_id      VARCHAR(22) NOT NULL,
-    compliment_count INTEGER  DEFAULT NULL,
-    text             TEXT     DEFAULT NULL,
-    date             DATETIME DEFAULT NULL,
+    compliment_count INTEGER   DEFAULT NULL,
+    text             TEXT      DEFAULT NULL,
+    date             timestamp DEFAULT NULL,
     FOREIGN KEY (business_id) REFERENCES dim_business (business_id)
 );
 
 CREATE TABLE dim_categories
 (
-    category_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    category_id SERIAL PRIMARY KEY,
     category    VARCHAR(64) NOT NULL
 );
 
 CREATE TABLE fact_business
 (
-    fact_business_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    fact_business_id SERIAL PRIMARY KEY,
     business_id      VARCHAR(22) NOT NULL,     -- Clé étrangère vers dim_business
     category_id      INTEGER     DEFAULT NULL, -- Clé étrangère pour le lien avec une catégorie
     review_count     INTEGER     DEFAULT NULL, -- Nombre d'avis

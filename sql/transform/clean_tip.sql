@@ -1,4 +1,6 @@
-SELECT COUNT(*)
+PRAGMA temp_store = MEMORY;
+
+SELECT COUNT(business_id)
 FROM tips;
 
 -- Suppression où le business_id  et user_id ne sont pas de longueur 22 ou contiennent un espace
@@ -24,5 +26,5 @@ WHERE length(date) != 19
    OR date NOT GLOB '????-??-?? ??:??:??'
    OR date IS NULL;
 
-SELECT COUNT(*)
+SELECT COUNT(business_id)
 FROM tips;

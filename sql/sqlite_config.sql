@@ -12,16 +12,16 @@ PRAGMA foreign_keys = ON;
 -- Uncomment section based on your storage type:
 
 -- [[ HDD OPTIMIZATION ]]
--- PRAGMA synchronous = NORMAL; -- Safer for mechanical drives
--- PRAGMA journal_size_limit = 1073741824; -- 1GB WAL file limit
--- PRAGMA wal_autocheckpoint = 5000;
+PRAGMA synchronous = NORMAL; -- Safer for mechanical drives
+PRAGMA journal_size_limit = 1073741824; -- 1GB WAL file limit
+PRAGMA wal_autocheckpoint = 5000;
 -- Less frequent checkpoints
 
 -- [[ SSD OPTIMIZATION ]]
-PRAGMA synchronous = OFF; -- Faster but riskier (SSDs only)
-PRAGMA journal_size_limit = 268435456; -- 256MB WAL sufficient for SSDs
-PRAGMA cell_size_check = OFF; -- Disable for modern SSDs
-PRAGMA page_size = 4096;
+-- PRAGMA synchronous = OFF; -- Faster but riskier (SSDs only)
+-- PRAGMA journal_size_limit = 268435456; -- 256MB WAL sufficient for SSDs
+-- PRAGMA cell_size_check = OFF; -- Disable for modern SSDs
+-- PRAGMA page_size = 4096;
 -- Use 4KB page size for SSDs
 
 /***********************[ MEMORY & PERFORMANCE ]*******************************/
