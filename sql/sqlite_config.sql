@@ -1,38 +1,52 @@
--- Set Journal Mode to WAL (Write-Ahead Logging) for better concurrency
-PRAGMA journal_mode = WAL;
+-- SQLite High-Performance Configuration File
+-- Usage: sqlite3 your_database.db < sqlite_config.sql
 
--- Set Synchronous to NORMAL for a good balance between performance and durability
-PRAGMA synchronous = NORMAL;
-
--- Set the cache size to reduce disk access (negative value sets the number of pages, higher is better for performance)
-PRAGMA cache_size = -100000;
-
--- Set the page size to 8KB (or 16KB, depending on your data) to optimize disk reads/writes
-PRAGMA page_size = 8192;
-
--- Enable foreign key constraints (if needed)
+/***********************[ ESSENTIAL FIRST SETTINGS ]***************************/
+PRAGMA page_size = 4096; -- 16384 for HDDs, change to 4096 for SSDs
+PRAGMA auto_vacuum = INCREMENTAL; -- Better for frequent modifications
+PRAGMA journal_mode = WAL; -- Critical for concurrency
 PRAGMA foreign_keys = ON;
+-- Maintain data integrity
 
--- Set the default locking mode to NORMAL for better concurrency
-PRAGMA locking_mode = NORMAL;
+/***********************[ STORAGE-SPECIFIC SETTINGS ]**************************/
+-- Uncomment section based on your storage type:
 
--- Set the default temp_store to MEMORY to store temporary data in memory for faster processing
-PRAGMA temp_store = MEMORY;
+-- [[ HDD OPTIMIZATION ]]
+-- PRAGMA synchronous = NORMAL; -- Safer for mechanical drives
+-- PRAGMA journal_size_limit = 1073741824; -- 1GB WAL file limit
+-- PRAGMA wal_autocheckpoint = 5000;
+-- Less frequent checkpoints
 
--- Increase the mmap_size (Optional): Use memory-mapped I/O for certain large database
-PRAGMA mmap_size = 536870912;
+-- [[ SSD OPTIMIZATION ]]
+PRAGMA synchronous = OFF; -- Faster but riskier (SSDs only)
+PRAGMA journal_size_limit = 268435456; -- 256MB WAL sufficient for SSDs
+PRAGMA cell_size_check = OFF; -- Disable for modern SSDs
+PRAGMA page_size = 4096;
+-- Use 4KB page size for SSDs
 
--- Turn on auto-vacuum to automatically reclaim space from deleted rows
-PRAGMA auto_vacuum = FULL;
+/***********************[ MEMORY & PERFORMANCE ]*******************************/
+PRAGMA cache_size = -250000; -- 4GB cache (250k pages * 16KB)
+PRAGMA mmap_size = 2147483648; -- 2GB memory mapping
+PRAGMA temp_store = MEMORY; -- Store temp data in RAM
+PRAGMA busy_timeout = 60000;
+-- 60s operation timeout
 
--- Set the number of threads SQLite should use to allow concurrent access
-PRAGMA threads = 6;
+/***********************[ MAINTENANCE & LIMITS ]*******************************/
+PRAGMA max_page_count = 1000000000; -- ~16TB max size (1B pages * 16KB)
+PRAGMA secure_delete = ON; -- Faster deletes (security tradeoff)
+PRAGMA automatic_index = ON; -- Manual index control
+PRAGMA recursive_triggers = ON;
+-- Enable complex triggers
 
--- Set the journal file size (increase this if you deal with larger transactions)
-PRAGMA journal_size_limit = 134217728; -- Set to 128MB
+/***********************[ INITIAL MAINTENANCE ]*********************************/
+VACUUM; -- Initial database compaction
+PRAGMA optimize; -- Query planner optimization
+PRAGMA
+analyze;
+-- Statistics generation
 
-PRAGMA max_page_count = 1000000;
-
-PRAGMA busy_timeout = 10000;
-
-PRAGMA cache_spill = OFF; -- Disable cache spill to avoid disk writes
+--***********************[ CONNECTION SETTINGS ]*********************************
+-- These should be set per-connection in application code:
+PRAGMA cache_spill = OFF; -- Prevent spill to disk (requires ample RAM)
+PRAGMA threads = 8; -- Manual thread control
+PRAGMA read_uncommitted = 1;-- Reduce reader/writer contention

@@ -10,13 +10,16 @@ if __name__ == '__main__':
         nom_fichier = "yelp_academic_dataset_tip.csv"
         file = os.path.join(absolute_path, "data", nom_fichier)
 
+        if not os.path.exists(file):
+            raise Exception(f"Le fichier {nom_fichier} est introuvable.")
+
         # compter le nombre de lignes dans le fichier
         with open(file, "r", encoding='utf-8') as f:
             num_lines = sum(1 for line in f)
 
         print(f"Le fichier contient {num_lines} lignes.")
 
-        df = pd.read_csv(file, on_bad_lines='skip',encoding='utf-8')
+        df = pd.read_csv(file, on_bad_lines='skip', encoding='utf-8')
 
         num_lines_df = df.shape[0]
         print(f"Le DataFrame contient {num_lines_df} lignes.")

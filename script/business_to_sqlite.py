@@ -88,6 +88,10 @@ if __name__ == '__main__':
         nom_fichier = "yelp_academic_dataset_business.json"
         absolute_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
         file = os.path.join(absolute_path, "data", nom_fichier)
+
+        if not os.path.exists(file):
+            raise Exception(f"Le fichier {nom_fichier} est introuvable.")
+
         db_path = os.path.join(absolute_path, "argon.db")
 
         conn = sqlite3.connect(db_path)

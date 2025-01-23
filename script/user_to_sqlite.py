@@ -10,6 +10,9 @@ if __name__ == '__main__':
         nom_fichier = "yelp_academic_dataset_user.csv"
         file = os.path.join(absolute_path, "data", nom_fichier)
 
+        if not os.path.exists(file):
+            raise Exception(f"Le fichier {nom_fichier} est introuvable.")
+
         # compter le nombre de lignes dans le fichier
         with open(file) as f:
             num_lines = sum(1 for line in f)
@@ -34,7 +37,6 @@ if __name__ == '__main__':
             conn.commit()
         except Exception as e:
             print(e)
-
 
         cursor.execute("""
         CREATE TABLE dim_users
@@ -71,6 +73,4 @@ if __name__ == '__main__':
         print(f"{nom_fichier} a été importé avec succès en bd.")
 
     except Exception as e:
-        if conn is not None:
-            conn.close()
         print(e)
