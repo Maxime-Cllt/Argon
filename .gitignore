@@ -48,3 +48,5 @@ gradle
 data
 argon.db
 *.log
+argon.db-shm
+argon.db-wal
