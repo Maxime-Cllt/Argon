@@ -79,11 +79,11 @@ CREATE TABLE dim_categories
 CREATE TABLE fact_business
 (
     fact_business_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    business_id      VARCHAR(22) NOT NULL,     -- Clé étrangère vers dim_business
-    category_id      INTEGER     DEFAULT NULL, -- Clé étrangère pour le lien avec une catégorie
-    review_count     INTEGER     DEFAULT NULL, -- Nombre d'avis
-    city             VARCHAR(43) DEFAULT NULL, -- Ville
-    postal_code      VARCHAR(8)  DEFAULT NULL, -- Code postal
-    state            VARCHAR(3)  DEFAULT NULL, -- Etat
-    value            INTEGER     DEFAULT NULL  -- Valeur associée au fait
+    business_id      VARCHAR(22) NOT NULL,      -- Clé étrangère vers dim_business
+    category_id      INTEGER      DEFAULT NULL, -- Clé étrangère pour le lien avec une catégorie
+    review_count     INTEGER      DEFAULT NULL, -- Nombre d'avis
+    city             VARCHAR(43)  DEFAULT NULL, -- Ville
+    postal_code      VARCHAR(8)   DEFAULT NULL, -- Code postal
+    state            VARCHAR(3)   DEFAULT NULL, -- Etat
+    value            VARCHAR(170) DEFAULT NULL  -- Valeur associée au fait
 );

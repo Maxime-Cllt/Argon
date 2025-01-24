@@ -18,7 +18,6 @@ Pour accéder au dashboard Metabase, cliquez sur le lien ci-dessous :
 
 [Dashboard](http://localhost:3000/)
 
-
 ## 📝 Description
 
 **Argon** est un entrepôt de données conçu pour exploiter les données de la plateforme Yelp, un site web populaire
@@ -55,6 +54,8 @@ Argon est compatible avec les systèmes d'exploitation suivants :
 Avant de commencer, assurez-vous d’avoir les éléments suivants installés sur votre machine :
 
 - Python 3.12 ou supérieur
+    - pandas
+    - psycopg2
 - Sqlite3
 - Metabase
 

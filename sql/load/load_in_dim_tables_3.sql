@@ -41,7 +41,9 @@ FROM (SELECT monday AS time_range
       FROM business_hours
       UNION
       SELECT friday
-      FROM business_hours) AS combined;
+      FROM business_hours)
+WHERE all_dates IS NOT NULL
+  AND all_dates <> '';
 
 
 -- Remplissage de la table dim_business_hours
