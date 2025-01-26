@@ -1,3 +1,5 @@
+SELECT COUNT(*)
+FROM checkin_date;
 -- Suppression des lignes de checkin_date qui ne sont pas liées à un business
 DELETE
 FROM checkin_date

@@ -1,3 +1,7 @@
+-- **************************
+-- ANALYSE SUR LES COMMERCES
+-- **************************
+
 -- Les 200 business avec le plus de compliments
 SELECT t1.name,
        AVG(t2.compliment_count) AS avg_compliment_count,
@@ -12,6 +16,9 @@ GROUP BY t1.business_id
 ORDER BY avg_compliment_count DESC
 LIMIT 200;
 
+-- **************************
+-- ANALYSE SUR LA GEOGRAPHIE
+-- **************************
 
 -- Les 20 villes avec le plus de business
 WITH RankedCities AS (SELECT city,
@@ -38,6 +45,22 @@ GROUP BY t1.city
 ORDER BY avg_compliment_count DESC
 LIMIT 50;
 
+-- Les states qui font en moyenne le plus de checkins
+SELECT t1.state,
+       AVG(t2.checkin_count) AS avg_checkin_count
+FROM fact_business AS t1
+         INNER JOIN dim_business AS t2
+                    ON t1.business_id = t2.business_id
+WHERE t2.checkin_count > 0
+  AND t2.checkin_count IS NOT NULL
+GROUP BY t1.state
+ORDER BY avg_checkin_count DESC;
+
+
+-- **************************
+-- ANALYSE SUR LES HORAIRES
+-- **************************
+
 -- Les heures d'ouverture les plus communes sur une semaine
 SELECT h.hours  AS common_hours,
        COUNT(*) AS frequency
@@ -53,7 +76,8 @@ FROM dim_business_hours bh
              OR h.id_hours = bh.id_hours_saturday
              OR h.id_hours = bh.id_hours_sunday
 WHERE length(h.hours) > 0
-AND h.hours NOT IN ('0:0-0:0')
+  AND h.hours NOT NULL
+  AND h.hours NOT IN ('0:0-0:0')
 GROUP BY h.hours
 ORDER BY frequency DESC;
 
@@ -128,16 +152,9 @@ WHERE id_hours_monday = 1
   AND id_hours_sunday = 1;
 
 
--- Les states qui font en moyenne le plus de checkins
-SELECT t1.state,
-       AVG(t2.checkin_count) AS avg_checkin_count
-FROM fact_business AS t1
-         INNER JOIN dim_business AS t2
-                    ON t1.business_id = t2.business_id
-WHERE t2.checkin_count > 0
-GROUP BY t1.state
-ORDER BY avg_checkin_count DESC;
-
+-- **************************
+-- ANALYSE SUR LES ATTRIBUTS
+-- **************************
 
 -- Les catégories les plus communes par ville
 SELECT t1.city,

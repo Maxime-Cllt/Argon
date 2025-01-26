@@ -6,7 +6,7 @@ import psycopg2
 
 if __name__ == '__main__':
     try:
-        absolute_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        absolute_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
         db_path = os.path.join(absolute_path, "argon.db")
 
         temp_absolute_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "temp"))
@@ -20,12 +20,19 @@ if __name__ == '__main__':
 
         # Connexion à PostgreSQL
         postgres_conn = psycopg2.connect(
-            dbname="postgres",
-            user="root",
-            password="root",
+            dbname="argon",
+            user="argon",
+            password="argon",
             host="localhost",
             port="5432"
         )
+        # postgres_conn = psycopg2.connect(
+        #     dbname="mc150904",
+        #     user="mc150904",
+        #     password="mc150904",
+        #     host="kafka.iem",
+        #     port="5432"
+        # )
         postgres_cursor = postgres_conn.cursor()
 
         script_path = os.path.join(absolute_path, "sql/load/create_posgtres_tables_5.sql")
@@ -37,10 +44,10 @@ if __name__ == '__main__':
             'dim_business': False,
             'dim_hours': False,
             'dim_business_hours': False,
-            'dim_amenagement': False,
-            'dim_tips': False,
-            'dim_categories': False,
-            'fact_business': False
+            # 'dim_amenagement': False,
+            # 'dim_tips': False,
+            # 'dim_categories': False,
+            # 'fact_business': False
         }
         chunk_size = 10000
 
@@ -86,21 +93,24 @@ if __name__ == '__main__':
             # récupérer les colonnes de la table
             postgres_cursor.execute(
                 f"SELECT column_name FROM information_schema.columns WHERE table_name = '{table_name}'")
+            # postgres_cursor.execute(
+            #     f"SELECT column_name FROM information_schema.columns WHERE table_name = '{table_name}'")
             columns = [column[0] for column in postgres_cursor.fetchall()]
 
             if not os.path.exists(csv_path):
                 print(f"Le fichier {csv_path} est introuvable.")
                 continue
 
-            sql = f"COPY {table_name} ({', '.join(columns)}) FROM STDIN DELIMITER ';' CSV HEADER QUOTE '\"' ESCAPE '\\'"
-            print(f"Importation de {table_name} dans PostgreSQL...")
-            with open(csv_path, mode='r', encoding='utf-8') as csv_file:
-                try:
+            # Build the COPY command with STDIN
+            sql = f"""COPY {table_name} ({', '.join(columns)}) FROM STDIN WITH (FORMAT CSV, DELIMITER ';', HEADER TRUE, QUOTE '"', ESCAPE '\\');"""
+
+            try:
+                with open(csv_path, mode='r', encoding='utf-8') as csv_file:
                     postgres_cursor.copy_expert(sql, csv_file)
-                    postgres_conn.commit()
-                except Exception as e:
-                    print(e)
-                    continue
+                postgres_conn.commit()
+                print(f"Importation de {table_name} réussie.")
+            except Exception as e:
+                print(f"Erreur lors de l'importation de {table_name}: {e}")
 
         # Close the connection
         sqlite_cursor.close()

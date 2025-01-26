@@ -54,8 +54,6 @@ Argon est compatible avec les systèmes d'exploitation suivants :
 Avant de commencer, assurez-vous d’avoir les éléments suivants installés sur votre machine :
 
 - Python 3.12 ou supérieur
-    - pandas
-    - psycopg2
 - Sqlite3
 - Metabase
 
@@ -89,6 +87,12 @@ cd Argon
 ```
 
 3. Installez les dépendances Python et executer le fichier run.sh (Linux ou MacOS) :
+
+```bash
+pip install -r requirements.txt
+```
+
+4. Exécutez le script run.sh (Linux ou MacOS) :
 
 ```bash
 ./run.sh

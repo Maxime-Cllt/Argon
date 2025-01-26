@@ -85,5 +85,7 @@ CREATE TABLE fact_business
     city             VARCHAR(43)  DEFAULT NULL, -- Ville
     postal_code      VARCHAR(8)   DEFAULT NULL, -- Code postal
     state            VARCHAR(3)   DEFAULT NULL, -- Etat
-    value            VARCHAR(170) DEFAULT NULL  -- Valeur associée au fait
+    value VARCHAR(170) DEFAULT NULL,            -- Valeur associée au fait
+    FOREIGN KEY (business_id) REFERENCES dim_business (business_id),
+    FOREIGN KEY (category_id) REFERENCES dim_categories (category_id)
 );

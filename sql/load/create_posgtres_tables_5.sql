@@ -85,5 +85,6 @@ CREATE TABLE fact_business
     postal_code      VARCHAR(8)  DEFAULT NULL,
     state            VARCHAR(3)  DEFAULT NULL,
     value            VARCHAR     DEFAULT NULL,
-    CONSTRAINT fk_fact_business FOREIGN KEY (business_id) REFERENCES dim_business (business_id)
+    CONSTRAINT fk_fact_business FOREIGN KEY (business_id) REFERENCES dim_business (business_id),
+    CONSTRAINT fk_fact_category FOREIGN KEY (category_id) REFERENCES dim_categories (category_id)
 );

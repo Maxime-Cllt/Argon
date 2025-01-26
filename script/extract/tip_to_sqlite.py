@@ -5,7 +5,7 @@ import pandas as pd
 
 if __name__ == '__main__':
     try:
-        absolute_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        absolute_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
         nom_fichier = "yelp_academic_dataset_tip.csv"
         file = os.path.join(absolute_path, "data", nom_fichier)

@@ -86,7 +86,7 @@ def create_tables(cursor):
 if __name__ == '__main__':
     try:
         nom_fichier = "yelp_academic_dataset_business.json"
-        absolute_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        absolute_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
         file = os.path.join(absolute_path, "data", nom_fichier)
 
         if not os.path.exists(file):

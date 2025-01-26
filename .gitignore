@@ -50,3 +50,5 @@ argon.db
 *.log
 argon.db-shm
 argon.db-wal
+*.csv
+.postgres_data
