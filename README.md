@@ -62,11 +62,10 @@ Avant de commencer, assurez-vous d’avoir les éléments suivants installés su
 Argon utilise les technologies suivantes :
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
-    <img src="https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite" />
-    <img src="https://img.shields.io/badge/Metabase-5094F0?style=for-the-badge&logo=metabase&logoColor=white" alt="Metabase" />
-    <img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" />
-    <img src="https://img.shields.io/badge/Oracle-F80000?style=for-the-badge&logo=oracle&logoColor=white" alt="Oracle" />
+  <img src="https://img.shields.io/badge/Python-4B8BBE?style=for-the-badge&logo=python&logoColor=FFD43B" alt="Python" />
+  <img src="https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=9ED9D8" alt="SQLite" />
+  <img src="https://img.shields.io/badge/Metabase-3182CE?style=for-the-badge&logo=metabase&logoColor=white" alt="Metabase" />
+  <img src="https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" />
 </div>
 
 ## 📦 Installation
@@ -92,7 +91,7 @@ cd Argon
 pip install -r requirements.txt
 ```
 
-4. Exécutez le script run.sh (Linux ou MacOS) :
+4. Exécutez le script run.sh (Linux ou MacOS) pour importer les données dans la base de données :
 
 ```bash
 ./run.sh

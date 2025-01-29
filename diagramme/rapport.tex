@@ -1,4 +1,10 @@
+\usepackage{graphicx}
+
 \section*{Résumé}
+
+Ce rapport présente les différentes étapes que nous avons suivies pour concevoir et implémenter un data warehouse à partir de données provenant de la plateforme Yelp.
+L'introdcution présente le contexte du projet et les objectifs visés.
+L'analyse du sujet et des données décrit les données disponibles, les besoins des utilisateurs et les objectifs analytiques.
 
 
 \section*{Introduction}
@@ -99,6 +105,12 @@ Voici quelques exemples de questions auxquelles nous souhaitons répondre organi
 \item Quels sont les catégories les plus communes à Las Vegas ?
 \item Quels sont les catégories qui plaisent le plus ?
 \end{itemize}
+\item Analyse des tendances :
+\begin{itemize}
+\item L'historique des checkins sur toute la période ?
+\item Quels sont les jours de l'année avec le plus de checkins ?
+\item Quels sont les jours de l'année avec le plus de tips ?
+\end{itemize}
 \end{itemize}
 
 Ces questions nous permettront de mieux comprendre les tendances et les caractéristiques des commerces, ainsi que les préférences des utilisateurs.
@@ -114,10 +126,13 @@ Sur la base des besoins identifiés, nous avons défini les objectifs analytique
 \item Comprendre quels sont les commerces les mieux évalués, en analysant les avis et les notes des utilisateurs.
 \item Analyser les horaires d’ouverture les plus courants des commerces, pour optimiser leur disponibilité et leur visibilité.
 \item Étudier les attributs les plus fréquents des commerces, pour identifier les services les plus recherchés par les utilisateurs.
+\item Analyser les tendances au fil du temps, en examinant les checkins et les tips sur une période donnée.
 \end{itemize}
 
 Nous pensons que ces analyses permettront de mieux comprendre les tendances et les préférences des utilisateurs, ainsi que les caractéristiques des commerces les plus populaires. Ces informations peuvent être utiles pour les propriétaires d’établissements, les gestionnaires de franchises ou les analystes de marché qui souhaitent optimiser leurs stratégies commerciales et leur présence en ligne.
-Par exemple, en identifiant les villes les plus attractives, les commerçants peuvent cibler leurs efforts de marketing et d’expansion pour maximiser leur visibilité et leur rentabilité. De même, en analysant les horaires d’ouverture les plus courants, ils peuvent ajuster leurs plages horaires pour répondre aux besoins de leur clientèle et augmenter leur fréquentation.
+Par exemple, en identifiant les villes les plus attractives,
+les commerçants peuvent cibler leurs efforts de marketing et d’expansion pour maximiser leur visibilité et leur rentabilité.
+De même, en analysant les horaires d’ouverture les plus courants, ils peuvent ajuster leurs plages horaires pour répondre aux besoins de leur clientèle et augmenter leur fréquentation.
 
 \chapter*{Conception du Data Warehouse}
 
@@ -139,13 +154,23 @@ Notre conception prend en compte une evolution future des besoins et des donnée
 Avec les questions et les besoins identifiés, nous avons défini les schémas suivants pour notre data warehouse :
 
 \begin{itemize}
-\item Table de faits "fact\_business" : Contient les mesures et les indicateurs clés liés aux commerces, tels que les notes moyennes, les nombres de compliments, etc.
+\item Table de faits "fact_business" : Contient les mesures et les indicateurs clés liés aux commerces, tels que la géographie, le nombre de checkins, les attributs, les catégories et le nombre de reviews.
+
 \item Tables de dimensions :
 \begin{itemize}
-\item "dim\_business" : Décrit les caractéristiques des commerces, telles que leur localisation, leurs horaires d’ouverture, leurs catégories, etc.
-\item "dim\_category" : Regroupe les catégories de commerces, pour permettre des analyses par secteur d’activité.
-\item "dim\_city" : Fournit des informations sur les villes, telles que leur population, leur superficie, etc.
+\item "dim_business" : Décrit les caractéristiques des commerces.
+\item "dim_hours" : Décrit tous les horaires possibles d'ouverture des commerces.
+\item dim_business_hours : Décrit les horaires d'ouverture des commerces.
+\item dim_amenagement : Décrire les aménagements des commerces.
+\item dim_tips : Décrit les avis donnés par les utilisateurs sur les commerces.
+\item dim_checkin : Décrit les dates des checkins effectués par les utilisateurs dans les commerces.
+\end{itemize}
 
+\end{itemize}
+
+Nous pensons que ces schémas permettront de répondre efficacement aux questions posées et de fournir des analyses pertinentes et exploitables pour les utilisateurs finaux.
+
+Les requêtes destiné à la création de ces tables sont disponibles dans le dossier "/sql/load/creating_dim_tables_2.sql".
 
 
 \section*{4.3 Justifications des choix techniques}
@@ -163,10 +188,13 @@ SQLite offre une solution simple et efficace pour stocker des données structur�
 \item SGBD (production) PostgreSQL : Pour stocker les données et exécuter les requêtes analytiques.
 PostgreSQL est un SGBD open-source (contrairement à Oracle) qui offre des fonctionnalités avancées pour les entrepôts de données, telles que les index avancés, les vues matérialisées et les procédures stockées.
 Il est également compatible avec de nombreux outils de business intelligence, ce qui facilite l’analyse et la visualisation des données. Pour voir plus loin, avec l'extension PostGIS, nous pourrions effectuer des analyses géospatiales avancées avec les positions géographiques des commerces et des utilisateurs.
+\item SQL : Le choix d'opter pour SQL est motivé par sa flexibilité notable car ce langage est compatible avec de nombreux SGBD. Cela permet de migrer facilement vers un autre SGBD si nécessaire, sans modifier considérablement les scripts existants.
+Cette portabilité, associée à la puissance de SQL pour manipuler et structurer efficacement les données en fait un outil particulièrement adapté à ce projet nottament sur le fait que nous n'avons pas de calculs complexes à effectuer.
 \item Metabase : Pour créer des tableaux de bord interactifs et des visualisations des données. Metabase est un outil open-source qui offre une interface intuitive pour explorer les données et générer des rapports visuels.
 Il est compatible avec PostgreSQL et ou SQLite et permet de créer des graphiques, des cartes et des tableaux de bord personnalisés pour communiquer efficacement les résultats des analyses.
 \end{itemize}
 
+Ces choix nous permettent egalement de pouvoir travailler en dehors de la fac sans recontrer de différence dans les outils utilisés, ce qui est un avantage non négligeable pour un projet de groupe.
 
 \chapter*{Intégration des données}
 
@@ -178,29 +206,28 @@ Un ETL est un processus d’extraction, de transformation et de chargement des d
 Voici le schéma général de notre processus ETL, avec les différents scripts et étapes impliquées :
 
 
+Chacune des étapes de l’ETL sera détaillée dans les sections suivantes, en mettant en évidence l'approche adoptée, les problèmes rencontrés et les solutions apportées.
+
 \subsection{5.1.1 Extraction des données}
 
 Via des scripts Python développés pour chaque fichier, nous avons extrait les données et les avons stockées dans une base de données SQLite.
 Ces scripts sont disponibles dans le dossier "/script" du projet.
 
-Le choix de SQLite s’est imposé pour plusieurs raisons. Tout d’abord, il s’agit d’une solution légère et intégrée qui ne nécessite aucune configuration complexe ni serveur dédié,
-ce qui simplifie le déploiement et la maintenance. Ensuite, SQLite est entièrement autonome et stocke les données dans un seul fichier, ce qui facilite grandement le transport et le
-partage de la base de données. Enfin, sa compatibilité avec la plupart des systèmes d’exploitation et son support natif dans Python en font une option pratique et efficace pour
-gérer les données du projet.
-
-Ici, SQLite est utilisé comme un entrepôt de données temporaire pour stocker les données brutes avant de les transformer et de les charger dans le data warehouse final.
 Nous voulons que les données soient stockées dans un format tabulaire pour faciliter leur manipulation et leur analyse ultérieure.
 
 Voici un schéma de l'extraction des données et le schéma relationnel qui en découle :
 
 \subsection{5.1.2 Transformation des données}
 
-La transformation des données est une étape cruciale pour nettoyer, normaliser et enrichir les données brutes, afin de les rendre cohérentes et exploitables pour l’analyse.
-Elle inclut des opérations clés telles que le filtrage, le tri, la jointure, l’agrégation et la déduplication, essentielles pour garantir la qualité et la pertinence des données.
-Nous avons implémenté ces transformations via des fichiers SQL contenant les requêtes nécessaires.
-L’utilisation de SQL offre une flexibilité notable car ce langage est compatible avec de nombreux SGBD.
-Cela permet de migrer facilement vers un autre SGBD si nécessaire, sans modifier considérablement les scripts existants.
-Cette portabilité, associée à la puissance de SQL pour manipuler et structurer efficacement les données en fait un outil particulièrement adapté à ce projet nottament sur le fait que nous n'avons pas de calculs complexes à effectuer.
+La transformation des données est une étape cruciale de l’ETL, qui consiste à nettoyer, normaliser et enrichir les données brutes pour les rendre cohérentes et exploitables.
+Cette etape implique d'avoir une connaissance globale des données et de leur contexte pour pouvoir les traiter correctement.
+Par exemple, il y a des patterns que l'on peut retrouver dans les données, comme les dates, la taille de certains champs (business_id ou user_id), des champs exclusivement numériques, etc.
+Ces patterns nous permettent de détecter des valeurs érronées et de les traiter en conséquence.
+Pour cela, nous avons développé des opérations de type DELETE pour nettoyer les données et les rendre cohérentes.
+Le nettoyage d'un fichier est associé à un fichier SQL qui contient les requêtes de nettoyage à effectuer sur la table associée.
+Cette décision a été prise pour faciliter la maintenance et la réutilisation des scripts de nettoyage.
+
+Voici un schéma qui résume la portée des actions des différents fichier SQL de nettoyage :
 
 
 \subsection{5.1.3 Chargement des données}
@@ -238,7 +265,7 @@ Cela est dû à la présence de virgules dans les champs textuels qui n'ont pas 
 On se retrouve donc avec des lignes que l'on doit volontairement ignorer car elles ne sont pas exploitables.
 Lors de cette partie, nous avons perdu 5.23% des données.
 Le nombre total de lignes du fichier CSV est de 1375578 et le nombre de lignes ignorées est de 58243 soit 1317335 lignes qui ont été insérées dans la base de données.
-Ce nombre de lignes est suffisant pour effectuer des analyses pertinentes et significatives, par contraite de temps, nous avons choisi de ne pas traiter ces lignes érronées.
+Ce nombre de lignes est suffisant pour effectuer des analyses pertinentes et significatives, par contrainte de temps, nous avons choisi de ne pas traiter ces lignes érronées.
 
 
 \subsection{5.3.2 Problèmes rencontrés lors de la transformation des données}
@@ -319,9 +346,6 @@ Voici un tableau qui résume les données avant et après le nettoyage :
 Nous arrivons donc à extraire et à nettoyer les données de ces fichiers sans aucune perte de données. Toutefois, des champs dans certaines tables sont vides, par exemple, pour un commerce,
 l'adresse peut être vide, nous avons juger que supprimer des lignes pour ces cas n'était pas pertinent.
 
-\textbf{
-}
-
 \subsection{5.3.3 Problèmes rencontrés lors du chargement des données}
 
 Lors du chargement des données, nous n'avons pas rencontré de problèmes majeurs.
@@ -335,9 +359,15 @@ Après le chargement des données, nous n'avons pas detecté d'anomalies sur nos
 
 \item 5.1 Construction des Data Marts
 
+Les data marts sont des sous-ensembles de données spécialisés, optimisés pour répondre à des questions spécifiques ou à des besoins analytiques particuliers.
+Dans notre cas, nous avons construit des data marts pour répondre aux besoins des utilisateurs finaux, en leur fournissant des vues agrégées et synthétiques des données.
+
+Voici les data marts que nous avons créés :
+
+
 
 \item 5.2 Requêtes et agrégations
-Requêtes SQL exécutées, cubes analytiques, et résultats obtenus.
+
 
 
 \item 5.3 Analyse des performances
@@ -358,16 +388,62 @@ Interprétation des résultats, insights pour les utilisateurs finaux.
 
 \chapter*{Documentation technique}
 
-\item 8.1 Instructions pour la compilation et l’exécution du code
-Procédure détaillée.
 
 
-\item 8.2 Liste des dépendances et configurations
-Bibliothèques utilisées, versions des outils, etc.
+\item 8.1 Liste des dépendances
 
+Pour l’exécution de l'ensemble du processus ETL, voici les étapes à suivre pour installer les dépendances nécessaires :
+
+\begin{itemize}
+\item Installer Python 3.12 et executrer la commande suivante pour installer les librairies nécessaires :
+
+\begin{verbatim}
+pip install -r requirements.txt
+\end{verbatim}
+
+\item Installer PostgreSQL et configurer les paramètres de connexion dans le fichier "/script/load/"
+
+\item Installer Metabase et configurer les paramètres de connexion à la base de données PostgreSQL.
+\end{itemize}
+
+
+\item 8.2 Instructions pour l’exécution du code
+
+Une fois les dépendances installées, il suffit d'executer le fichier run.sh qui se chargera d'effectuer toutes les étapes de l'ETL.
 
 
 \chapter*{Bilan}
 
+\subsection{8.1 Synthèse}
+
+
+
+\subsection{8.2 Perspectives}
+
+Pour aller plus loin, voici quelques pistes d’amélioration et d’extension du projet :
+
+\begin{itemize}
+
+\item Intégration de nouvelles sources de données : Pour enrichir les analyses et les visualisations, il serait intéressant d’intégrer des données supplémentaires, telles que des données météorologiques, des données démographiques ou des données économiques.
+Cela permettrait de mieux comprendre les facteurs qui influencent les commerces et les utilisateurs, en croisant différentes sources d’information.
+
+\item Implémentation de modèles prédictifs : Pour anticiper les tendances et formuler des prévisions, il serait utile de développer des modèles prédictifs basés sur les données existantes.
+Par exemple, en utilisant des techniques de machine learning, il serait possible de prédire les notes des commerces ou les comportements des utilisateurs en fonction de différents facteurs.
+
+\item Développement de fonctionnalités avancées : Pour améliorer l’expérience utilisateur et offrir des fonctionnalités avancées, il serait intéressant d’ajouter des outils de recommandation, des analyses prédictives ou des fonctionnalités de géolocalisation.
+Cela permettrait de personnaliser les résultats en fonction des préférences des utilisateurs et de proposer des recommandations pertinentes.
+
+
+
+
+\subsection{8.3 Conclusion}
+
+En conclusion, ce projet nous a permis de mettre en pratique les concepts fondamentaux de l’informatique décisionnelle et de la modélisation de données.
+Nous avons exploré les différentes étapes du cycle de vie d’un data warehouse, de la modélisation à l’analyse en passant par l’intégration des données.
+Nos compétences en SQL ont été renforcées et nous avons acquis une expérience précieuse dans la manipulation de données massives et hétérogènes.
+Les outils de BI ont permis de souligner l’importance de la visualisation des données pour communiquer efficacement les résultats des analyses.
+
 
 \chapter*{Annexes}
+
+

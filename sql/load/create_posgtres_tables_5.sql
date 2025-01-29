@@ -6,8 +6,8 @@ DROP TABLE IF EXISTS dim_tips CASCADE;
 DROP TABLE IF EXISTS dim_attributs CASCADE;
 DROP TABLE IF EXISTS dim_categories CASCADE;
 DROP TABLE IF EXISTS dim_hours CASCADE;
+DROP TABLE IF EXISTS dim_checkin CASCADE;
 DROP TABLE IF EXISTS fact_business CASCADE;
-DROP TABLE IF EXISTS fact_categories CASCADE;
 
 -- Create the dim_business table
 CREATE TABLE dim_business
@@ -73,6 +73,15 @@ CREATE TABLE dim_categories
     category_id SERIAL PRIMARY KEY,
     category    VARCHAR(64) NOT NULL
 );
+
+CREATE TABLE dim_checkin
+(
+    checkin_id  SERIAL PRIMARY KEY,
+    business_id VARCHAR(22) NOT NULL,
+    date        DATETIME    NOT NULL,
+    FOREIGN KEY (business_id) REFERENCES dim_business (business_id)
+);
+
 
 -- Create the fact_business table
 CREATE TABLE fact_business

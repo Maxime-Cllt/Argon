@@ -4,17 +4,28 @@
 
 -- Les 200 business avec le plus de compliments
 SELECT t1.name,
-       AVG(t2.compliment_count) AS avg_compliment_count,
+       count(t2.compliment_count) AS total_compliments,
        t1.city,
        t1.state
 FROM dim_business AS t1
          INNER JOIN dim_tips AS t2
                     ON t1.business_id = t2.business_id
-WHERE t2.compliment_count > 0
-  AND t2.compliment_count IS NOT NULL
+WHERE t2.compliment_count IS NOT NULL
 GROUP BY t1.business_id
-ORDER BY avg_compliment_count DESC
+ORDER BY total_compliments DESC
 LIMIT 200;
+
+
+-- Répartition des business par catégorie
+SELECT value, COUNT(business_id) AS count_business
+FROM fact_business AS t1
+         INNER JOIN dim_categories AS t2
+                    ON t1.category_id = t2.category_id
+WHERE t2.category = 'Categorie'
+GROUP BY value
+ORDER BY count_business DESC;
+
+
 
 -- **************************
 -- ANALYSE SUR LA GEOGRAPHIE
@@ -33,17 +44,29 @@ WHERE rank <= 20
 ORDER BY rank;
 
 
--- Les villes qui donnent en moyenne le plus de compliments
+-- Répartition des catégories de business par ville avec le nombre de business
+SELECT city, value, COUNT(business_id) AS count_business
+FROM fact_business AS t1
+         INNER JOIN dim_categories AS t2
+                    ON t1.category_id = t2.category_id
+WHERE t2.category = 'Categorie'
+  AND value IS NOT NULL
+  AND length(value) > 0
+  AND city IS NOT NULL
+  AND length(city) > 0
+GROUP BY city, value
+ORDER BY count_business DESC;
+
+
+-- Les villes qui font le plus de tips
 SELECT t1.city,
-       AVG(t2.compliment_count) AS avg_compliment_count
-FROM dim_business AS t1
+       count(t2.compliment_count) AS max_compliment_count
+FROM fact_business AS t1
          INNER JOIN dim_tips AS t2
                     ON t1.business_id = t2.business_id
-WHERE t2.compliment_count > 0
-  AND t2.compliment_count IS NOT NULL
+WHERE t2.compliment_count IS NOT NULL
 GROUP BY t1.city
-ORDER BY avg_compliment_count DESC
-LIMIT 50;
+ORDER BY max_compliment_count DESC;
 
 -- Les states qui font en moyenne le plus de checkins
 SELECT t1.state,
@@ -56,6 +79,17 @@ WHERE t2.checkin_count > 0
 GROUP BY t1.state
 ORDER BY avg_checkin_count DESC;
 
+
+-- Les city qui font en moyenne le plus de checkins
+SELECT t1.city,
+       AVG(t2.checkin_count) AS avg_checkin_count
+FROM fact_business AS t1
+         INNER JOIN dim_business AS t2
+                    ON t1.business_id = t2.business_id
+WHERE t2.checkin_count > 0
+  AND t2.checkin_count IS NOT NULL
+GROUP BY t1.city
+ORDER BY avg_checkin_count DESC;
 
 -- **************************
 -- ANALYSE SUR LES HORAIRES
@@ -169,7 +203,7 @@ WHERE t1.category_id IS NOT NULL
 GROUP BY t1.city;
 
 
--- Les catégories les plus communes à Las Vegas
+-- Les attributs les plus communes à Las Vegas
 SELECT t2.category,
        t2.category_id AS count_category
 FROM fact_business AS t1
@@ -182,7 +216,7 @@ GROUP BY count_category
 ORDER BY count_category DESC;
 
 
--- Les catégories qui plaisent le plus
+-- Les attributs qui plaisent le plus
 SELECT c.category,
        SUM(t.compliment_count) AS total_compliments
 FROM dim_tips t
@@ -193,6 +227,72 @@ FROM dim_tips t
 WHERE c.category != 'Categorie'
   AND t.compliment_count IS NOT NULL
   AND c.category IS NOT NULL
-  AND t.compliment_count > 0
 GROUP BY c.category
 ORDER BY total_compliments DESC;
+
+-- Les catégories qui reçoivent le plus de compliments
+SELECT t1.value,
+       SUM(t3.compliment_count) AS total_compliments
+FROM fact_business AS t1
+         INNER JOIN dim_categories AS t2
+                    ON t1.category_id = t2.category_id
+         INNER JOIN dim_tips AS t3
+                    ON t1.business_id = t3.business_id
+WHERE t2.category = 'Categorie'
+  AND compliment_count > 0
+GROUP BY t1.value
+ORDER BY total_compliments DESC;
+
+
+-- Les catégories qui plaisent le plus en fonction de la ville
+SELECT t1.city,
+       t1.value,
+       AVG(t3.compliment_count) AS total_compliments
+FROM fact_business AS t1
+         INNER JOIN dim_categories AS t2
+                    ON t1.category_id = t2.category_id
+         INNER JOIN dim_tips AS t3
+                    ON t1.business_id = t3.business_id
+WHERE t2.category = 'Categorie'
+  AND length(t1.value) > 0
+GROUP BY t1.city, t1.value
+ORDER BY total_compliments DESC;
+
+-- Les villes qui ont le plus de business avec l'attribut 'French'
+SELECT t3.city, COUNT(t1.city) AS count_business
+FROM fact_business AS t1
+         INNER JOIN dim_categories AS t2
+                    ON t1.category_id = t2.category_id
+         INNER JOIN dim_business AS t3
+                    ON t1.business_id = t3.business_id
+WHERE t2.category = 'Categorie'
+  AND t1.value IS NOT NULL
+  AND length(t1.value) > 0
+  AND t1.value = 'French'
+GROUP BY t3.city
+ORDER BY count_business DESC;
+
+
+-- **************************
+-- ANALYSE SUR LES DATES
+-- **************************
+
+
+-- L'historique des checkins sur toute la période
+SELECT date,
+       COUNT(date) AS total_checkins
+FROM dim_checkin
+WHERE date > '2019-01-01'
+GROUP BY date;
+
+-- Les jours de l'année avec le plus de checkins
+SELECT strftime('%m-%d', date) AS month_day, COUNT(checkin_id) AS checkin_count
+FROM dim_checkin
+GROUP BY month_day
+ORDER BY month_day;
+
+-- Les jours de l'année avec le plus de tips
+SELECT strftime('%m-%d', date) AS month_day, COUNT(tips_id) AS checkin_count
+FROM dim_tips
+GROUP BY month_day
+ORDER BY month_day;

@@ -1,5 +1,6 @@
 SELECT COUNT(*)
 FROM checkin_date;
+
 -- Suppression des lignes de checkin_date qui ne sont pas liées à un business
 DELETE
 FROM checkin_date
@@ -13,3 +14,6 @@ FROM checkin_date
 WHERE length(date) != 19
    OR date NOT GLOB '????-??-?? ??:??:??'
    OR date IS NULL;
+
+SELECT COUNT(*)
+FROM checkin_date;

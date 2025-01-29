@@ -92,6 +92,13 @@ SELECT key
 FROM business_attributes
 GROUP BY key;
 
+
+-- Remplissage de la table dim_checkin
+INSERT INTO dim_checkin (business_id, date)
+SELECT t1.business_id,
+       date(t1.date)
+FROM checkin_date AS t1;
+
 -- Remplissage de la table fact_business
 INSERT INTO fact_business (business_id, category_id, review_count, city, postal_code, state, value)
 SELECT t1.business_id,
