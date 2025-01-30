@@ -1,5 +1,13 @@
 -- Remplissage de la table dim_business
 PRAGMA temp_store = MEMORY;
+
+-- Remplissage de la table dim_checkin
+INSERT INTO dim_checkin (business_id, date)
+SELECT t1.business_id,
+       date(t1.date)
+FROM checkin_date AS t1;
+
+-- Remplissage de la table dim_business
 INSERT INTO dim_business (business_id,
                           name,
                           address,
@@ -20,7 +28,7 @@ UPDATE dim_business
 SET checkin_count = cc.checkin_count
 FROM (SELECT business_id,
              COUNT(date) AS checkin_count
-      FROM checkin_date
+      FROM dim_checkin
       GROUP BY business_id) cc
 WHERE dim_business.business_id = cc.business_id;
 
@@ -92,12 +100,10 @@ SELECT key
 FROM business_attributes
 GROUP BY key;
 
-
--- Remplissage de la table dim_checkin
-INSERT INTO dim_checkin (business_id, date)
-SELECT t1.business_id,
-       date(t1.date)
-FROM checkin_date AS t1;
+-- Remplissage de la table dim_city
+INSERT INTO dim_city (city_name, population, state)
+SELECT city_name AS city_name, population, country
+FROM city;
 
 -- Remplissage de la table fact_business
 INSERT INTO fact_business (business_id, category_id, review_count, city, postal_code, state, value)

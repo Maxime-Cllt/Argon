@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS dim_business_hours;
 DROP TABLE IF EXISTS dim_amenagement;
 DROP TABLE IF EXISTS dim_tips;
 DROP TABLE IF EXISTS dim_attributs;
+DROP TABLE IF EXISTS dim_city;
 DROP TABLE IF EXISTS dim_categories;
 DROP TABLE IF EXISTS dim_hours;
 DROP TABLE IF EXISTS dim_checkin;
@@ -82,6 +83,14 @@ CREATE TABLE dim_checkin
     business_id VARCHAR(22) NOT NULL,
     date        DATETIME    NOT NULL,
     FOREIGN KEY (business_id) REFERENCES dim_business (business_id)
+);
+
+CREATE TABLE dim_city
+(
+    city_id    INTEGER PRIMARY KEY,
+    city_name  VARCHAR(32),
+    population INTEGER,
+    state      VARCHAR(2)
 );
 
 

@@ -6,4 +6,3 @@ PRAGMA temp_store = MEMORY;
 INSERT INTO business_attributes (business_id, key, value)
 SELECT business_id, 'Categorie', category
 FROM business_categories;
-DROP TABLE business_categories;

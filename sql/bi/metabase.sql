@@ -288,8 +288,7 @@ GROUP BY date;
 -- Les jours de l'année avec le plus de checkins
 SELECT strftime('%m-%d', date) AS month_day, COUNT(checkin_id) AS checkin_count
 FROM dim_checkin
-GROUP BY month_day
-ORDER BY month_day;
+GROUP BY month_day;
 
 -- Les jours de l'année avec le plus de tips
 SELECT strftime('%m-%d', date) AS month_day, COUNT(tips_id) AS checkin_count

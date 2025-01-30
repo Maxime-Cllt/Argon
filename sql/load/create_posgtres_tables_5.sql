@@ -7,6 +7,7 @@ DROP TABLE IF EXISTS dim_attributs CASCADE;
 DROP TABLE IF EXISTS dim_categories CASCADE;
 DROP TABLE IF EXISTS dim_hours CASCADE;
 DROP TABLE IF EXISTS dim_checkin CASCADE;
+DROP TABLE IF EXISTS dim_city CASCADE;
 DROP TABLE IF EXISTS fact_business CASCADE;
 
 -- Create the dim_business table
@@ -47,11 +48,11 @@ CREATE TABLE dim_business_hours
 CREATE TABLE dim_amenagement
 (
     business_id VARCHAR(22) PRIMARY KEY,
-    garage      BOOLEAN DEFAULT NULL,
-    street      BOOLEAN DEFAULT NULL,
-    validated   BOOLEAN DEFAULT NULL,
-    lot         BOOLEAN DEFAULT NULL,
-    valet       BOOLEAN DEFAULT NULL,
+    garage    int2 DEFAULT NULL,
+    street    int2 DEFAULT NULL,
+    validated int2 DEFAULT NULL,
+    lot       int2 DEFAULT NULL,
+    valet     int2 DEFAULT NULL,
     CONSTRAINT fk_amenagement_business FOREIGN KEY (business_id) REFERENCES dim_business (business_id)
 );
 
@@ -78,8 +79,18 @@ CREATE TABLE dim_checkin
 (
     checkin_id  SERIAL PRIMARY KEY,
     business_id VARCHAR(22) NOT NULL,
-    date        DATETIME    NOT NULL,
+    date TIMESTAMP NOT NULL,
     FOREIGN KEY (business_id) REFERENCES dim_business (business_id)
+);
+
+
+-- Create the dim_attributs table
+CREATE TABLE dim_city
+(
+    city_id    SERIAL PRIMARY KEY,
+    city_name  VARCHAR(32),
+    population INTEGER,
+    state      VARCHAR(2)
 );
 
 

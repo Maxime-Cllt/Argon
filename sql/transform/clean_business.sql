@@ -5,7 +5,15 @@ WHERE length(business_id) != 22
    OR business_id GLOB '* *'
    OR business_id IS NULL;
 
+UPDATE business
+SET name = TRIM(name)
+WHERE name GLOB '* '
+   OR name GLOB ' *';
 
+UPDATE business
+SET city = TRIM(city)
+WHERE city GLOB '* '
+   OR city GLOB ' *';
 
 DELETE
 FROM business_attributes
