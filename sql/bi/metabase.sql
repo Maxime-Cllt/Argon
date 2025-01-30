@@ -44,6 +44,15 @@ WHERE rank <= 20
 ORDER BY rank;
 
 
+-- Ratio d'habitants par ville / nombre de business
+SELECT t1.city_name, t1.population, COUNT(t2.business_id) AS count_business
+FROM dim_city AS t1
+         INNER JOIN fact_business AS t2
+                    ON t1.city_name = t2.city
+WHERE population > 0
+GROUP BY t1.city_name, t1.population;
+
+
 -- Répartition des catégories de business par ville avec le nombre de business
 SELECT city, value, COUNT(business_id) AS count_business
 FROM fact_business AS t1
