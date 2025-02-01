@@ -87,7 +87,7 @@ CREATE TABLE dim_checkin
 
 CREATE TABLE dim_city
 (
-    city_id    INTEGER PRIMARY KEY,
+    city_id INTEGER PRIMARY KEY AUTOINCREMENT,
     city_name  VARCHAR(32),
     population INTEGER,
     state      VARCHAR(2)

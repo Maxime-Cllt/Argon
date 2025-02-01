@@ -2,19 +2,25 @@
 -- ANALYSE SUR LES COMMERCES
 -- **************************
 
--- Les 200 business avec le plus de compliments
-SELECT t1.name,
-       count(t2.compliment_count) AS total_compliments,
+-- Les type de commerces avec leur catégorie et des informations sur générales
+SELECT t4.name,
+       GROUP_CONCAT((SELECT t6.category
+                     FROM dim_categories AS t6
+                     WHERE t6.category_id = t1.category_id
+                       AND t6.category != 'Categorie'), ', ') AS attributes,
+       GROUP_CONCAT((SELECT t1.value
+                     FROM dim_categories AS t6
+                     WHERE t6.category_id = t1.category_id
+                       AND t6.category = 'Categorie'), ', ')  AS categories,
+       t1.review_count,
+       t4.checkin_count,
        t1.city,
-       t1.state
-FROM dim_business AS t1
-         INNER JOIN dim_tips AS t2
-                    ON t1.business_id = t2.business_id
-WHERE t2.compliment_count IS NOT NULL
-GROUP BY t1.business_id
-ORDER BY total_compliments DESC
-LIMIT 200;
-
+       t3.population
+FROM fact_business AS t1
+         INNER JOIN dim_city AS t3 ON t1.city = t3.city_name
+         INNER JOIN dim_business AS t4 ON t1.business_id = t4.business_id
+WHERE t3.population > 0
+GROUP BY t1.business_id;
 
 -- Répartition des business par catégorie
 SELECT value, COUNT(business_id) AS count_business
@@ -24,8 +30,6 @@ FROM fact_business AS t1
 WHERE t2.category = 'Categorie'
 GROUP BY value
 ORDER BY count_business DESC;
-
-
 
 -- **************************
 -- ANALYSE SUR LA GEOGRAPHIE

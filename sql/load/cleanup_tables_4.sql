@@ -5,3 +5,4 @@ DROP TABLE IF EXISTS business_hours;
 DROP TABLE IF EXISTS business_categories;
 DROP TABLE IF EXISTS business_attributes;
 DROP TABLE IF EXISTS business_parking;
+DROP TABLE IF EXISTS city;
