@@ -102,8 +102,12 @@ GROUP BY key;
 
 -- Remplissage de la table dim_city
 INSERT INTO dim_city (city_name, population, state)
-SELECT city_name AS city_name, population, country
-FROM city;
+SELECT upper(city_name) AS city_name
+     , population
+     , country
+FROM city
+GROUP BY population
+ORDER BY city_name;
 
 -- Remplissage de la table fact_business
 INSERT INTO fact_business (business_id, category_id, review_count, city, postal_code, state, value)

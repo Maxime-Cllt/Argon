@@ -88,7 +88,7 @@ CREATE TABLE dim_checkin
 CREATE TABLE dim_city
 (
     city_id    SERIAL PRIMARY KEY,
-    city_name  VARCHAR(32),
+    city_name VARCHAR(64),
     population INTEGER,
     state      VARCHAR(2)
 );

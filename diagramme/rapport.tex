@@ -163,6 +163,7 @@ Avec les questions et les besoins identifiés, nous avons défini les schémas s
 \item dim_business_hours : Décrit les horaires d'ouverture des commerces.
 \item dim_amenagement : Décrire les aménagements des commerces.
 \item dim_tips : Décrit les avis donnés par les utilisateurs sur les commerces.
+\item dim_city : Décrit les villes en fonction de leur nombre d'habitants et de leur pays.
 \item dim_checkin : Décrit les dates des checkins effectués par les utilisateurs dans les commerces.
 \end{itemize}
 
@@ -345,6 +346,17 @@ Voici un tableau qui résume les données avant et après le nettoyage :
 
 Nous arrivons donc à extraire et à nettoyer les données de ces fichiers sans aucune perte de données. Toutefois, des champs dans certaines tables sont vides, par exemple, pour un commerce,
 l'adresse peut être vide, nous avons juger que supprimer des lignes pour ces cas n'était pas pertinent.
+
+Nous avons également remarqué des problèmes de doublon dans le nom des villes comme illustrés via la figure ci dessous :
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{images/doublon_ville.png}
+\caption{Doublon dans le nom des villes}
+\end{figure}
+
+Via cet exemple, nous avons dectecté un problème de qualité des données qui impactera les analyses futures. Par exemple, en voulant regrouper les données avec un GROUP BY sur le nom de la ville, nous aurons plusieurs résultats pour une même ville.
+
 
 \subsection{5.3.3 Problèmes rencontrés lors du chargement des données}
 

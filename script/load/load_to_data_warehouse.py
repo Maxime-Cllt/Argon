@@ -17,11 +17,17 @@ if __name__ == '__main__':
         sqlite_conn = sqlite3.connect(db_path)
         sqlite_cursor = sqlite_conn.cursor()
 
-        POSTGRES_USER = "mc150904"
-        POSTGRES_PASSWORD = "mc150904"
-        POSTGRES_HOST = "kafka.iem"
+        # POSTGRES_USER = "mc150904"
+        # POSTGRES_PASSWORD = "mc150904"
+        # POSTGRES_HOST = "kafka.iem"
+        # POSTGRES_PORT = "5432"
+        # POSTGRES_DB = "mc150904"
+
+        POSTGRES_USER = "root"
+        POSTGRES_PASSWORD = "root"
+        POSTGRES_HOST = "localhost"
         POSTGRES_PORT = "5432"
-        POSTGRES_DB = "mc150904"
+        POSTGRES_DB = "postgres"
 
         postgres_conn = psycopg2.connect(
             dbname=POSTGRES_DB,
@@ -33,15 +39,15 @@ if __name__ == '__main__':
         postgres_cursor = postgres_conn.cursor()
 
         tables_to_import_map = {
-            'dim_business': False,
-            'dim_hours': False,
-            'dim_business_hours': False,
-            'dim_checkin': False,
-            'dim_amenagement': False,
-            'dim_tips': False,
+            # 'dim_business': False,
+            # 'dim_hours': False,
+            # 'dim_business_hours': False,
+            # 'dim_checkin': False,
+            # 'dim_amenagement': False,
+            # 'dim_tips': False,
             'dim_city': False,
-            'dim_categories': False,
-            'fact_business': False
+            # 'dim_categories': False,
+            # 'fact_business': False
         }
         chunk_size = 10000
 
