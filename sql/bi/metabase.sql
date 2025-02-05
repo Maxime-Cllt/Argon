@@ -22,6 +22,7 @@ FROM fact_business AS t1
 WHERE t3.population > 0
 GROUP BY t1.business_id;
 
+
 -- Répartition des business par catégorie
 SELECT value, COUNT(business_id) AS count_business
 FROM fact_business AS t1
@@ -30,6 +31,7 @@ FROM fact_business AS t1
 WHERE t2.category = 'Categorie'
 GROUP BY value
 ORDER BY count_business DESC;
+
 
 -- **************************
 -- ANALYSE SUR LA GEOGRAPHIE
@@ -57,7 +59,7 @@ SELECT t2.city, t1.population, COUNT(t2.business_id) AS count_business
 FROM dim_city AS t1
          INNER JOIN fact_business AS t2
                     ON t1.city_name = upper(t2.city)
-WHERE population > 0
+WHERE t1.population > 0
 GROUP BY t1.city_name, t1.population;
 
 
@@ -327,3 +329,20 @@ SELECT strftime('%m-%d', date) AS month_day, COUNT(tips_id) AS checkin_count
 FROM dim_tips
 GROUP BY month_day
 ORDER BY month_day;
+
+
+
+-- avoir la taille en Mo d'une table SQLite
+SELECT
+    name AS table_name,
+    ROUND(SUM(pgsize) / 1048576.0, 2) AS size_mb
+FROM dbstat
+GROUP BY name
+ORDER BY size_mb DESC;
+
+-- avoir la taille en Mo d'une table PostgreSQL
+SELECT
+    relname AS table_name,
+    ROUND(pg_total_relation_size(relid) / 1048576.0, 2) AS size_mb
+FROM pg_catalog.pg_statio_user_tables
+ORDER BY size_mb DESC;
