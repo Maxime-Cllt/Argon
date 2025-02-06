@@ -14,14 +14,16 @@ INSERT INTO dim_business (business_id,
                           city,
                           state,
                           postal_code,
-                          review_count)
+                          review_count, latitude, longitude)
 SELECT b.business_id,
        b.name,
        b.address,
        b.city,
        b.state,
        b.postal_code,
-       b.review_count
+       b.review_count,
+       b.latitude,
+       b.longitude
 FROM business b;
 
 UPDATE dim_business

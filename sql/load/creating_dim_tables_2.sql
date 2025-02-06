@@ -20,7 +20,9 @@ CREATE TABLE dim_business
     state         VARCHAR(3)   DEFAULT NULL,
     postal_code   VARCHAR(8)   DEFAULT NULL,
     review_count  INTEGER      DEFAULT NULL,
-    checkin_count INTEGER      DEFAULT NULL
+    checkin_count INTEGER DEFAULT NULL,
+    latitude      FLOAT   DEFAULT NULL,
+    longitude     FLOAT   DEFAULT NULL
 );
 
 CREATE TABLE dim_hours

@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS dim_categories CASCADE;
 DROP TABLE IF EXISTS dim_hours CASCADE;
 DROP TABLE IF EXISTS dim_checkin CASCADE;
 DROP TABLE IF EXISTS dim_city CASCADE;
+DROP TABLE IF EXISTS dim_reviews CASCADE;
 DROP TABLE IF EXISTS fact_business CASCADE;
 
 -- Create the dim_business table
@@ -20,7 +21,9 @@ CREATE TABLE dim_business
     state         VARCHAR(3)   DEFAULT NULL,
     postal_code   VARCHAR(8)   DEFAULT NULL,
     review_count  INTEGER      DEFAULT NULL,
-    checkin_count INTEGER      DEFAULT NULL
+    checkin_count INTEGER DEFAULT NULL,
+    latitude      FLOAT   DEFAULT NULL,
+    longitude     FLOAT   DEFAULT NULL
 );
 
 -- Create the dim_hours table
@@ -93,6 +96,17 @@ CREATE TABLE dim_city
     state      VARCHAR(2)
 );
 
+
+CREATE TABLE dim_reviews
+(
+    review_id   SERIAL PRIMARY KEY,
+    business_id VARCHAR(22) NOT NULL,
+    cool        INTEGER DEFAULT NULL,
+    date        DATE    DEFAULT NULL,
+    funny       INTEGER DEFAULT NULL,
+    stars       FLOAT   DEFAULT NULL,
+    CONSTRAINT fk_reviews_business FOREIGN KEY (business_id) REFERENCES dim_business (business_id)
+);
 
 -- Create the fact_business table
 CREATE TABLE fact_business

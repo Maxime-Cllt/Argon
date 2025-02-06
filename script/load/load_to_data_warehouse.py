@@ -1,8 +1,35 @@
 import csv
 import os
 import sqlite3
+import time
 
 import psycopg2
+
+
+def csv_to_postgres(csv_path: str, table_name: str, postgres_cursor, separator: str):
+    with open(csv_path, mode='r', encoding='utf-8') as csv_file:
+        header = csv_file.readline().strip()
+
+    header = header.split(separator)
+    header = [h.replace('"', '') for h in header]
+
+    if not os.path.exists(csv_path):
+        print(f"Le fichier {csv_path} est introuvable.")
+        return
+
+    sql = f"""COPY {table_name} ({', '.join(header)}) FROM STDIN WITH (FORMAT CSV, DELIMITER '{separator}', HEADER TRUE, QUOTE '"', ESCAPE '\\');"""
+
+    print(f"Importation de {table_name} en cours...")
+
+    try:
+        postgres_cursor.execute(f"TRUNCATE TABLE {table_name} CASCADE;")
+        with open(csv_path, mode='r', encoding='utf-8') as csv_file:
+            postgres_cursor.copy_expert(sql, csv_file)
+        postgres_conn.commit()
+        print(f"Importation de {table_name} réussie.")
+    except Exception as e:
+        print(f"Erreur lors de l'importation de {table_name}: {e}")
+
 
 if __name__ == '__main__':
     try:
@@ -17,17 +44,17 @@ if __name__ == '__main__':
         sqlite_conn = sqlite3.connect(db_path)
         sqlite_cursor = sqlite_conn.cursor()
 
-        # POSTGRES_USER = "mc150904"
-        # POSTGRES_PASSWORD = "mc150904"
-        # POSTGRES_HOST = "kafka.iem"
-        # POSTGRES_PORT = "5432"
-        # POSTGRES_DB = "mc150904"
-
-        POSTGRES_USER = "root"
-        POSTGRES_PASSWORD = "root"
-        POSTGRES_HOST = "localhost"
+        POSTGRES_USER = "mc150904"
+        POSTGRES_PASSWORD = "mc150904"
+        POSTGRES_HOST = "kafka.iem"
         POSTGRES_PORT = "5432"
-        POSTGRES_DB = "postgres"
+        POSTGRES_DB = "mc150904"
+
+        # POSTGRES_USER = "root"
+        # POSTGRES_PASSWORD = "root"
+        # POSTGRES_HOST = "localhost"
+        # POSTGRES_PORT = "5432"
+        # POSTGRES_DB = "postgres"
 
         postgres_conn = psycopg2.connect(
             dbname=POSTGRES_DB,
@@ -45,10 +72,11 @@ if __name__ == '__main__':
             # 'dim_checkin': False,
             # 'dim_amenagement': False,
             # 'dim_tips': False,
-            'dim_city': False,
+            # 'dim_city': False,
             # 'dim_categories': False,
             # 'fact_business': False
         }
+
         chunk_size = 10000
 
         # verifier si le repertoire temporaire existe et vérifier si les fichiers csv existent
@@ -91,33 +119,23 @@ if __name__ == '__main__':
         sqlite_cursor.close()
         sqlite_conn.close()
 
+        start_time = time.time()  # 201 secondes
+
         # Importation des fichiers CSV dans PostgreSQL
         for table_name, to_import in tables_to_import_map.items():
             csv_path = os.path.join(temp_absolute_path, f"{table_name}.csv")
+            csv_to_postgres(csv_path, table_name, postgres_cursor, separator=';')
 
-            with open(csv_path, mode='r', encoding='utf-8') as csv_file:
-                header = csv_file.readline().strip()
+        file_to_import_from_data = {
+            'tpid2020_yelp_review.csv': 'dim_reviews'
+        }
 
-            header = header.split(';')
-            header = [h.replace('"', '') for h in header]
+        # Pour les fichiers en local dans le répertoire data
+        for file, table_name in file_to_import_from_data.items():
+            csv_path = os.path.join(absolute_path, "data", file)
+            csv_to_postgres(csv_path, table_name, postgres_cursor, separator=',')
 
-            if not os.path.exists(csv_path):
-                print(f"Le fichier {csv_path} est introuvable.")
-                continue
-
-            # Build the COPY command with STDIN
-            sql = f"""COPY {table_name} ({', '.join(header)}) FROM STDIN WITH (FORMAT CSV, DELIMITER ';', HEADER TRUE, QUOTE '"', ESCAPE '\\');"""
-
-            print(f"Importation de {table_name} en cours...")
-
-            try:
-                postgres_cursor.execute(f"TRUNCATE TABLE {table_name} CASCADE;")
-                with open(csv_path, mode='r', encoding='utf-8') as csv_file:
-                    postgres_cursor.copy_expert(sql, csv_file)
-                postgres_conn.commit()
-                print(f"Importation de {table_name} réussie.")
-            except Exception as e:
-                print(f"Erreur lors de l'importation de {table_name}: {e}")
+        print(f"Temps d'exécution: {time.time() - start_time} secondes")
 
         # Close the connection
         postgres_cursor.close()
