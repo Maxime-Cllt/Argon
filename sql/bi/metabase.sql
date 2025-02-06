@@ -18,13 +18,13 @@ SELECT t4.name,
                 LIMIT 1), ', ') AS categories,
        t1.review_count,
        t4.checkin_count,
-       t1.city,
-       t3.population
+       avg(t5.stars) AS avg_stars,
+       t1.city
 FROM fact_business AS t1
-         INNER JOIN dim_city AS t3 ON upper(t1.city) = t3.city_name
          INNER JOIN dim_business AS t4 ON t1.business_id = t4.business_id
-WHERE t3.population > 0
-GROUP BY t1.business_id, t4.name, t1.city, t3.population, t4.checkin_count, t1.review_count;
+         INNER JOIN dim_reviews AS t5 ON t1.business_id = t5.business_id
+GROUP BY t1.business_id, t4.name, t1.review_count, t4.checkin_count, t1.city;
+
 
 -- Répartition des business par catégorie
 SELECT value, COUNT(business_id) AS count_business
@@ -35,14 +35,13 @@ WHERE t2.category = 'Categorie'
 GROUP BY value
 ORDER BY count_business DESC;
 
-
--- La localisation des commerces
-SELECT latitude, longitude
-FROM dim_business
-WHERE longitude IS NOT NULL
-  AND latitude IS NOT NULL
-  AND length(longitude::varchar) > 0
-  AND length(latitude::varchar) > 0;
+-- Les business les mieux notés
+SELECT t1.name, avg(t2.stars) AS avg_stars, count(t2.stars) AS count_reviews
+FROM dim_business AS t1
+         INNER JOIN dim_reviews AS t2 ON t1.business_id = t2.business_id
+WHERE t2.stars = (SELECT MAX(stars) FROM dim_reviews)
+GROUP BY t1.name
+ORDER BY count_reviews DESC;
 
 -- **************************
 -- ANALYSE SUR LA GEOGRAPHIE
@@ -56,7 +55,7 @@ WITH RankedCities AS (SELECT city,
                       FROM fact_business AS t1
                                INNER JOIN dim_city AS t2 ON upper(t1.city) = t2.city_name
                       WHERE population > 0
-                      GROUP BY city, t1.state)
+                      GROUP BY city)
 SELECT city,
        state,
        count_business
@@ -65,16 +64,12 @@ WHERE rank <= 20
 ORDER BY rank;
 
 
--- Nombre de business total dans le dataset
-SELECT count(business_id)
-FROM dim_business;
-
 -- Ratio d'habitants par ville / nombre de business
 SELECT t2.city, t1.population, COUNT(t2.business_id) AS count_business
 FROM dim_city AS t1
          INNER JOIN fact_business AS t2
                     ON t1.city_name = upper(t2.city)
-WHERE t1.population > 0
+WHERE population > 0
 GROUP BY t1.city_name, t1.population;
 
 
@@ -228,16 +223,6 @@ WHERE id_hours_monday = 1
   AND id_hours_saturday = 1
   AND id_hours_sunday = 1;
 
--- Combien de business sont ouverts du lundi au vendredi
-SELECT COUNT(business_id) AS count_business
-FROM dim_business_hours
-WHERE id_hours_monday > 0
-  AND id_hours_tuesday > 0
-  AND id_hours_wednesday > 0
-  AND id_hours_thursday > 0
-  AND id_hours_friday > 0
-  AND (id_hours_saturday = 0 OR id_hours_saturday IS NULL)
-  AND (id_hours_sunday = 0 OR id_hours_sunday IS NULL);
 
 -- **************************
 -- ANALYSE SUR LES ATTRIBUTS
@@ -301,17 +286,19 @@ ORDER BY total_compliments DESC;
 
 -- Les catégories qui plaisent le plus en fonction de la ville
 SELECT t1.city,
-       t2.category
+       t1.value,
+       AVG(t3.compliment_count) AS total_compliments
 FROM fact_business AS t1
          INNER JOIN dim_categories AS t2
                     ON t1.category_id = t2.category_id
-         INNER JOIN dim_city AS t3
-                    ON upper(t1.city) = t3.city_name
-WHERE t1.category_id IS NOT NULL
-  AND t2.category != 'Categorie'
-  AND length(t2.category) > 0
-  AND t3.population > 0
-GROUP BY t1.city, t2.category;
+         INNER JOIN dim_tips AS t3
+                    ON t1.business_id = t3.business_id
+         INNER JOIN dim_city AS t4 ON upper(t1.city) = t4.city_name
+WHERE t2.category = 'Categorie'
+  AND length(t1.value) > 0
+  AND t4.population > 0
+GROUP BY t4.city_id, t1.value
+ORDER BY total_compliments DESC;
 
 -- Les villes qui ont le plus de business avec l'attribut 'French'
 SELECT t3.city,
@@ -327,7 +314,7 @@ WHERE t2.category = 'Categorie'
   AND length(t1.value) > 0
   AND t1.value = 'French'
   AND t4.population > 0
-GROUP BY t4.city_id, t3.city
+GROUP BY t4.city_id
 ORDER BY count_business DESC;
 
 -- **************************
@@ -347,38 +334,15 @@ SELECT strftime('%m-%d', date) AS month_day, COUNT(checkin_id) AS checkin_count
 FROM dim_checkin
 GROUP BY month_day;
 
+
+-- Les jours de l'année avec le plus de reviews
+SELECT to_char(date, 'MM-DD') AS month_day, COUNT(review_id) AS rewiew_count
+FROM dim_reviews
+GROUP BY month_day;
+
+
 -- Les jours de l'année avec le plus de tips
 SELECT strftime('%m-%d', date) AS month_day, COUNT(tips_id) AS checkin_count
 FROM dim_tips
 GROUP BY month_day
 ORDER BY month_day;
-
-
--- Comparaison des tendances entre les tips et les checkins
-WITH temp AS (SELECT TO_CHAR(date, 'MM-DD') AS month_day, COUNT(checkin_id) AS source_checkin, 0 AS count_tips
-              FROM dim_checkin
-              GROUP BY month_day
-              UNION ALL
-              SELECT TO_CHAR(date, 'MM-DD') AS month_day, 0 AS source_checkin, COUNT(tips_id) AS count_tips
-              FROM dim_tips
-              GROUP BY month_day)
-SELECT month_day,
-       SUM(source_checkin) AS source_checkin,
-       SUM(count_tips)     AS count_tips
-FROM temp
-GROUP BY month_day
-ORDER BY month_day;
-
-
--- avoir la taille en Mo d'une table SQLite
-SELECT name                              AS table_name,
-       ROUND(SUM(pgsize) / 1048576.0, 2) AS size_mb
-FROM dbstat
-GROUP BY name
-ORDER BY size_mb DESC;
-
--- avoir la taille en Mo d'une table PostgreSQL
-SELECT relname                                             AS table_name,
-       ROUND(pg_total_relation_size(relid) / 1048576.0, 2) AS size_mb
-FROM pg_catalog.pg_statio_user_tables
-ORDER BY size_mb DESC;
