@@ -18,7 +18,7 @@ SELECT t4.name,
                 LIMIT 1), ', ') AS categories,
        t1.review_count,
        t4.checkin_count,
-       avg(t5.stars) AS avg_stars,
+       avg(t5.stars)            AS avg_stars,
        t1.city
 FROM fact_business AS t1
          INNER JOIN dim_business AS t4 ON t1.business_id = t4.business_id
@@ -344,5 +344,26 @@ GROUP BY month_day;
 -- Les jours de l'année avec le plus de tips
 SELECT strftime('%m-%d', date) AS month_day, COUNT(tips_id) AS checkin_count
 FROM dim_tips
+GROUP BY month_day
+ORDER BY month_day;
+
+
+-- Les jours de l'année avec le plus de checkins, reviews et tips
+WITH temp AS (SELECT TO_CHAR(date, 'MM-DD') AS month_day, COUNT(checkin_id) AS source_checkin, 0 AS count_tips, 0 AS rewiew_count
+              FROM dim_checkin
+              GROUP BY month_day
+              UNION ALL
+              SELECT TO_CHAR(date, 'MM-DD') AS month_day, 0 AS source_checkin, COUNT(tips_id) AS count_tips, 0 AS rewiew_count
+              FROM dim_tips
+              GROUP BY month_day
+              UNION ALL
+              SELECT TO_CHAR(date, 'MM-DD') AS month_day, 0 AS source_checkin,0 AS rewiew_count  , COUNT(review_id) AS rewiew_count
+              FROM dim_reviews
+              GROUP BY month_day)
+SELECT month_day,
+       SUM(source_checkin) AS source_checkin,
+       SUM(count_tips)     AS count_tips,
+       SUM(rewiew_count)   AS rewiew_count
+FROM temp
 GROUP BY month_day
 ORDER BY month_day;
