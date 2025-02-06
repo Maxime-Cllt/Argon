@@ -23,7 +23,7 @@ sqlite3 argon.db < sql/transform/clean_city.sql
 
 echo "Création des data marts et des tables de dimension en local"
 sqlite3 argon.db < sql/load/merge_attr_cat_table_1.sql
-sqlite3 argon.db < sql/load/creating_dim_tables_2.sql
+sqlite3 argon.db < sql/load/creating_data_marts_2.sql
 sqlite3 argon.db < sql/load/load_in_dim_tables_3.sql
 sqlite3 argon.db < sql/load/cleanup_tables_4.sql
 

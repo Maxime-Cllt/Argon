@@ -14,10 +14,10 @@ Dans le cadre du module d’Informatique Décisionnelle du Master 2 BDIA, ce pro
 
 Dans ce contexte, ce projet simule des problématiques réelles rencontrées par des analystes, des décideurs ou des responsables d’entreprise souhaitant exploiter des données volumineuses pour identifier des tendances, formuler des prévisions ou optimiser leurs opérations. Les données proviennent de l’application Yelp, une plateforme reconnue qui regroupe des millions d’avis d’utilisateurs sur divers commerces. 
 
-Ce projet couvre l’ensemble des étapes essentielles du cycle de vie d’un système décisionnel : modélisation, intégration, analyse et présentation des données. 
+Ce projet couvre l’ensemble des étapes essentielles du cycle de vie d’un système décisionnel : modélisation, intégration, analyse et présentation des données.
 
 
-\section*{2.2 Objectifs}
+\subsection*{Objectifs}
 L’objectif principal de ce projet est de construire un système décisionnel complet et fonctionnel à partir d’un jeu de données volumineux et hétérogène fourni par l’application Yelp. Cela implique :
 
 \begin{enumerate}
@@ -36,7 +36,7 @@ Nos analyses se concentrent sur les commerces, en mettant l'accent sur les facte
 \chapter*{Analyse du sujet et des données}
 
 
-\section*{3.1 Description des données disponibles}
+\subsection*{3.1 Description des données disponibles}
 Les données exploitées dans ce projet proviennent de la plateforme Yelp et sont organisées sous différents formats et sources. Elles offrent une vue détaillée des commerces, des utilisateurs et de leurs interactions. Voici une présentation des principales sources de données :
 
 
@@ -75,6 +75,15 @@ La base de données PostgreSQL contient plusieurs tables liées aux utilisateurs
 \end{itemize}
 
 Voici le diagramme relationnel de ce schéma de base de données :
+
+
+
+\subsection*{3.1.3. Élargissement des données}
+
+Pour enrichir les analyses et les visualisations, nous avons envisagé d’intégrer des données supplémentaires, telles que des données démographiques, comme le nombre d'habitants par ville.
+Ces données ont été obtenues à partir de sources externes (via API).
+Nous pensons que ces informations complémentaires permettront de mieux comprendre les tendances et les caractéristiques des commerces, en les croisant avec des données géographiques et démographiques.
+
 
 \section*{3.2 Analyse des besoins}
 
@@ -122,7 +131,7 @@ Elles guideront la conception de notre data warehouse et l’élaboration des re
 Sur la base des besoins identifiés, nous avons défini les objectifs analytiques suivants :
 
 \begin{itemize}
-\item Identifier les villes les plus attractives pour les commerces, en fonction de leur popularité.
+\item Identifier les villes les plus attractives pour les commerces, en fonction de leur popularité et de leur nombre d'habitants.
 \item Comprendre quels sont les commerces les mieux évalués, en analysant les avis et les notes des utilisateurs.
 \item Analyser les horaires d’ouverture les plus courants des commerces, pour optimiser leur disponibilité et leur visibilité.
 \item Étudier les attributs les plus fréquents des commerces, pour identifier les services les plus recherchés par les utilisateurs.
@@ -218,6 +227,9 @@ Nous voulons que les données soient stockées dans un format tabulaire pour fac
 
 Voici un schéma de l'extraction des données et le schéma relationnel qui en découle :
 
+
+Chacune des étapes de l’ETL sera détaillée dans les sections suivantes, en mettant en évidence l'approche adoptée, les problèmes rencontrés et les solutions apportées.
+
 \subsection{5.1.2 Transformation des données}
 
 La transformation des données est une étape cruciale de l’ETL, qui consiste à nettoyer, normaliser et enrichir les données brutes pour les rendre cohérentes et exploitables.
@@ -243,6 +255,7 @@ Contrairement à une insertion ligne par ligne, COPY permet de charger les donn�
 
 Voici un schéma qui résume le processus de chargement des données :
 
+Ce script se trouve dans le répertoire   "script/load/".
 
 \section{5.3 Problèmes rencontrés et solutions apportées}
 
@@ -268,6 +281,53 @@ Lors de cette partie, nous avons perdu 5.23% des données.
 Le nombre total de lignes du fichier CSV est de 1375578 et le nombre de lignes ignorées est de 58243 soit 1317335 lignes qui ont été insérées dans la base de données.
 Ce nombre de lignes est suffisant pour effectuer des analyses pertinentes et significatives, par contrainte de temps, nous avons choisi de ne pas traiter ces lignes érronées.
 
+
+\subsubsection{5.3.1.3 API}
+
+La principale difficulté à tout d'abord été de trouver une API qui répondait à nos besoins.
+Nous avons trouvé une API fiable qui nous permettait de récupérer des données démographiques en fonction du nom de la ville.
+Sa particularité est qu'elle est gratuite et qu'elle ne nécessite pas de clé d'API, nous sommes donc limités en nombre de requêtes par jour (1000/heure).
+
+Voici un exemple de cette requête :
+
+\begin{verbatim}
+http://api.geonames.org/search?q={city}&maxRows=1&type=json&username={username}
+\end{verbatim}
+
+Un exemple de réponse est le suivant :
+
+\begin{verbatim}
+{
+"totalResultsCount": 1701,
+"geonames": [
+{
+"adminCode1": "08",
+"lng": "-79.39864",
+"geonameId": 6167865,
+"toponymName": "Toronto",
+"countryId": "6251999",
+"fcl": "P",
+"population": 2600000,
+"countryCode": "CA",
+"name": "Toronto",
+"fclName": "city, village,...",
+"adminCodes1": {
+"ISO3166_2": "ON"
+},
+"countryName": "Canada",
+"fcodeName": "seat of a first-order administrative division",
+"adminName1": "Ontario",
+"lat": "43.70643",
+"fcode": "PPLA"
+}
+]
+}
+\end{verbatim}
+
+Pour notre usage, nous n'utilisons que les champs "population" et "countryCode. Nous avons jugé que les autres champs n'étaient pas pertinents pour nos analyses.
+
+Nous avons pu quantifier le nombre de villes à traiter en faisant une requete d'agrégation sur le nom de la ville.
+Nous avons trouvé ~ 1200 villes différentes, ce qui est un nombre raisonnable en terme de requêtes à effectuer et de données à stocker.
 
 \subsection{5.3.2 Problèmes rencontrés lors de la transformation des données}
 
@@ -355,7 +415,26 @@ Nous avons également remarqué des problèmes de doublon dans le nom des villes
 \caption{Doublon dans le nom des villes}
 \end{figure}
 
-Via cet exemple, nous avons dectecté un problème de qualité des données qui impactera les analyses futures. Par exemple, en voulant regrouper les données avec un GROUP BY sur le nom de la ville, nous aurons plusieurs résultats pour une même ville.
+Via cet exemple, nous avons détecté un problème de qualité des données qui impactera les analyses futures.
+Par exemple, en voulant regrouper les données avec un GROUP BY sur le nom de la ville, nous aurons plusieurs résultats qui correspondent à la même ville, ce qui faussera les résultats.
+
+Pour résoudre ce problème, plusieurs solutions sont envisageables comme par exemple:
+
+\begin{itemize}
+\item Utiliser une fonction de nettoyage des données pour supprimer les espaces en trop, les caractères spéciaux, etc.
+\item Utiliser une fonction de normalisation des données pour uniformiser les noms des villes.
+\item Utiliser une fonction de déduplication pour fusionner les noms de villes similaires.
+\item Utiliser un algorithme de distance de Levenshtein pour regrouper les noms de villes proches.
+\end{itemize}
+
+Nous avons choisi d'utiliser une fonction de nettoyage des données pour supprimer les espaces en trop et les caractères spéciaux car c'est la solution la plus simple et la plus rapide à mettre en place et de croisé le nom des villes à la table de dimension des villes.
+En faisant une jointure sur la table des villes en ignorant la casse, nous avons pu regrouper les noms des villes similaires et les normaliser, corrigeant ainsi le problème de doublon.
+
+\subsubsection{5.3.2.1 API}
+
+Pour l'API, nous n'avons pas rencontré de problèmes majeurs, les données retournées étaient cohérentes et bien structurées.
+Il y a toutefois des villes qui n'ont pas été trouvées dans la base de données de l'API.
+Nous avons decidé de les laisser en l'état car elles ne représentent qu'une petite partie des données et permettent de corriger le problème de doublon expliqué précédemment.
 
 
 \subsection{5.3.3 Problèmes rencontrés lors du chargement des données}
@@ -366,35 +445,84 @@ Ce processus à une durée en moyenne de moins de 30 secondes pour l'ensemble de
 Par manque de temps, nous n'avons pas fais de comparatif entre la méthode COPY et une insertion ligne par ligne, mais nous sommes convaincus que la méthode COPY est la plus efficace pour charger de grandes quantités de données.
 Après le chargement des données, nous n'avons pas detecté d'anomalies sur nos données dans le SGBD PostgreSQL (kafka.iem),
 
+Voici un comparatif du volume occupé en Mo par chaque table dans la base SQLite et dans la base PostgreSQL :
 
-\chapter*{Analyse et interrogation des données}
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+Table & SQLite (Mo) & PostgreSQL (Mo) \\
+\hline
+tips & 50 & 50 \\
+\hline
+\end{tabular}
+\end{center}
 
-\item 5.1 Construction des Data Marts
-
-Les data marts sont des sous-ensembles de données spécialisés, optimisés pour répondre à des questions spécifiques ou à des besoins analytiques particuliers.
-Dans notre cas, nous avons construit des data marts pour répondre aux besoins des utilisateurs finaux, en leur fournissant des vues agrégées et synthétiques des données.
-
-Voici les data marts que nous avons créés :
-
-
-
-\item 5.2 Requêtes et agrégations
-
-
-
-\item 5.3 Analyse des performances
-Mesure des temps d’exécution et suggestions d’amélioration.
+L'intéret ici, est de voir la taille des données entre deux SGDB différents
 
 
 \chapter*{Présentation des résultats}
 
 
 \item 6.1 Tableaux de bord et visualisations
-Utilisation de Metabase pour créer des dashboards et visualisations.
 
+La partie de visualisation des données est une étape cruciale pour communiquer efficacement les résultats des analyses et les insights obtenus.
+Notre but a été d'exprimer les résultats des différentes requêtes dans la forme la plus claire et la plus compréhensible possible pour les utilisateurs finaux.
+Metabase fournit de bons outils pour répondre à ce besoin.
+
+Les tableaux de bord et les visualisations ont été regroupé en catégories comme comme enoncé dans la section sur l'analyse des besoins, cela permet de faciliter la navigation et de rendre les informations plus accessibles.
+
+Voici un aperçu des tableaux de bord et des visualisations créés :
+
+
+
+La majorité de ces graphiques utilisent des reqêtres que nous avons préalablement écrites dans un query editor.
+Ces requêtes sont disponibles dans le dossier "sql/bi/report/metabase.sql".
 
 \item 6.2 Synthèse des résultats analytiques
-Interprétation des résultats, insights pour les utilisateurs finaux.
+
+Nous jugeons que les résultats obtenus sont pertinents et exploitables pour les utilisateurs finaux.
+Les analyses réalisées permettent de mieux comprendre les tendances et les caractéristiques des commerces, ainsi que les préférences des utilisateurs.
+Les visualisations offrent une vue synthétique et intuitive des données.
+
+Voici une analyse que nous avons pu tirer des données :
+
+\begin{itemize}
+
+\item On constate une baisse de l'utilisation de la plateforme Yelp au fil du temps, avec une diminution du nombre de checkins et de tips. (Analyse sur les tendances)
+
+\item Les restaurants sont les commerces les plus nombreux sur la plateforme, suivis par les magasins et les services.
+
+\item Les villes les plus populaires sont Las Vegas, Phoenix et Toronto, avec un nombre élevé de commerces et d'utilisateurs.
+
+\item L'attribut le plus commun est d'avoir le "Wi-Fi"et la catégorie la plus commune est "Restaurants".
+
+\item Les heures d'ouverture les plus courantes sont de 8h à 17h, du lundi au vendredi.
+
+
+\item 6.3 Analyse des performances
+
+Pour évaluer les performances de notre data warehouse, nous avons mesuré le temps d’exécution de chargement des différents rapport analytiques.
+Metabase fournit des outils de monitoring et de suivi des performances qui nous ont permis de mesurer les temps de réponse des requêtes et d’identifier les éventuels goulets d’étranglement.
+
+Voici un tableau récapitulatif des performances des requêtes :
+
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+Requête & Temps d'exécution \\
+\hline
+Requête 1 & 0.5s \\
+\hline
+Requête 2 & 0.7s \\
+\hline
+Requête 3 & 1.2s \\
+\hline
+\end{tabular}
+\end{center}
+
+Nous avons jugé que ces temps d'exécution étaient satisfaisants pour les analyses réalisées et les volumes de données traités.
+
+Le SGBD que nous utilisons possède une bonne configuration matérielle et logicielle, en plus de bénéficier de la proximité de ce dernier, en découlent des temps d'exécution rapides.
 
 
 
@@ -428,6 +556,13 @@ Une fois les dépendances installées, il suffit d'executer le fichier run.sh qu
 
 \subsection{8.1 Synthèse}
 
+Nous pensons avoir respecté les objectifs initiaux du projet en construisant un data warehouse fonctionnel et en réalisant des analyses pertinentes sur les données Yelp.
+
+Voici un schéma qui résume le temps passé sur chaque étape du projet :
+
+
+La partie sur la conception du data warehouse a été la plus longue car nous devions definir au préalable ce que nous voulions analyser et quelles données étaient nécessaires pour répondre à ces questions.
+La création des rapports avec Metabase à neccessité de prendre de la hauteur pour qu'un public non technique puisse comprendre les résultats de nos analyses.
 
 
 \subsection{8.2 Perspectives}
@@ -436,7 +571,7 @@ Pour aller plus loin, voici quelques pistes d’amélioration et d’extension d
 
 \begin{itemize}
 
-\item Intégration de nouvelles sources de données : Pour enrichir les analyses et les visualisations, il serait intéressant d’intégrer des données supplémentaires, telles que des données météorologiques, des données démographiques ou des données économiques.
+\item Intégration de nouvelles sources de données : Pour enrichir les analyses et les visualisations, il serait intéressant d’intégrer des données supplémentaires, telles que des données météorologiques, des données économiques ou des données sociales.
 Cela permettrait de mieux comprendre les facteurs qui influencent les commerces et les utilisateurs, en croisant différentes sources d’information.
 
 \item Implémentation de modèles prédictifs : Pour anticiper les tendances et formuler des prévisions, il serait utile de développer des modèles prédictifs basés sur les données existantes.
@@ -445,8 +580,9 @@ Par exemple, en utilisant des techniques de machine learning, il serait possible
 \item Développement de fonctionnalités avancées : Pour améliorer l’expérience utilisateur et offrir des fonctionnalités avancées, il serait intéressant d’ajouter des outils de recommandation, des analyses prédictives ou des fonctionnalités de géolocalisation.
 Cela permettrait de personnaliser les résultats en fonction des préférences des utilisateurs et de proposer des recommandations pertinentes.
 
+\item Outils de BI plus avancés : Pour améliorer les visualisations et les tableaux de bord, il serait utile d’explorer des outils de business intelligence plus avancés, tels que Power BI ou QlikView.
 
-
+\end{itemize}
 
 \subsection{8.3 Conclusion}
 

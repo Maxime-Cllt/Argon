@@ -25,6 +25,10 @@ if __name__ == '__main__':
 
     data = {}
 
+    # check if table exists
+    conn.execute("CREATE TABLE IF NOT EXISTS city (city_name VARCHAR(255), population INT, country VARCHAR(2))")
+    conn.commit()
+
     prepared_insert = "INSERT INTO city (city_name, population, country) VALUES (?, ?, ?)"
 
     for city in cities:
