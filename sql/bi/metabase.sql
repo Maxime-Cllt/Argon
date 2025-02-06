@@ -349,15 +349,24 @@ ORDER BY month_day;
 
 
 -- Les jours de l'année avec le plus de checkins, reviews et tips
-WITH temp AS (SELECT TO_CHAR(date, 'MM-DD') AS month_day, COUNT(checkin_id) AS source_checkin, 0 AS count_tips, 0 AS rewiew_count
+WITH temp AS (SELECT TO_CHAR(date, 'MM-DD') AS month_day,
+                     COUNT(checkin_id)      AS source_checkin,
+                     0                      AS count_tips,
+                     0                      AS rewiew_count
               FROM dim_checkin
               GROUP BY month_day
               UNION ALL
-              SELECT TO_CHAR(date, 'MM-DD') AS month_day, 0 AS source_checkin, COUNT(tips_id) AS count_tips, 0 AS rewiew_count
+              SELECT TO_CHAR(date, 'MM-DD') AS month_day,
+                     0                      AS source_checkin,
+                     COUNT(tips_id)         AS count_tips,
+                     0                      AS rewiew_count
               FROM dim_tips
               GROUP BY month_day
               UNION ALL
-              SELECT TO_CHAR(date, 'MM-DD') AS month_day, 0 AS source_checkin,0 AS rewiew_count  , COUNT(review_id) AS rewiew_count
+              SELECT TO_CHAR(date, 'MM-DD') AS month_day,
+                     0                      AS source_checkin,
+                     0                      AS rewiew_count,
+                     COUNT(review_id)       AS rewiew_count
               FROM dim_reviews
               GROUP BY month_day)
 SELECT month_day,
@@ -367,3 +376,15 @@ SELECT month_day,
 FROM temp
 GROUP BY month_day
 ORDER BY month_day;
+
+-- Nombre de checkins total
+SELECT count(checkin_id)
+FROM dim_checkin;
+
+-- Nombre de reviews total
+SELECT count(review_id)
+FROM dim_reviews;
+
+-- Nombre de tips total
+SELECT count(tips_id)
+FROM dim_tips;
