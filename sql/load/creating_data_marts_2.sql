@@ -9,6 +9,7 @@ DROP TABLE IF EXISTS dim_city;
 DROP TABLE IF EXISTS dim_categories;
 DROP TABLE IF EXISTS dim_hours;
 DROP TABLE IF EXISTS dim_checkin;
+DROP TABLE IF EXISTS dim_reviews;
 DROP TABLE IF EXISTS fact_business;
 
 CREATE TABLE dim_business
@@ -23,6 +24,16 @@ CREATE TABLE dim_business
     checkin_count INTEGER DEFAULT NULL,
     latitude      FLOAT   DEFAULT NULL,
     longitude     FLOAT   DEFAULT NULL
+);
+
+CREATE TABLE dim_reviews
+(
+    review_id   INTEGER PRIMARY KEY AUTOINCREMENT,
+    business_id VARCHAR(22) NOT NULL,
+    cool        INTEGER DEFAULT NULL,
+    date        DATE    DEFAULT NULL,
+    funny       INTEGER DEFAULT NULL,
+    stars       INTEGER DEFAULT NULL
 );
 
 CREATE TABLE dim_hours
