@@ -21,9 +21,10 @@ CREATE TABLE dim_business
     state         VARCHAR(3)   DEFAULT NULL,
     postal_code   VARCHAR(8)   DEFAULT NULL,
     review_count  INTEGER      DEFAULT NULL,
-    checkin_count INTEGER DEFAULT NULL,
-    latitude      FLOAT   DEFAULT NULL,
-    longitude     FLOAT   DEFAULT NULL
+    checkin_count INTEGER      DEFAULT NULL,
+    avg_stars     FLOAT        DEFAULT NULL,
+    latitude      FLOAT        DEFAULT NULL,
+    longitude     FLOAT        DEFAULT NULL
 );
 
 -- Create the dim_hours table
@@ -51,11 +52,11 @@ CREATE TABLE dim_business_hours
 CREATE TABLE dim_amenagement
 (
     business_id VARCHAR(22) PRIMARY KEY,
-    garage    int2 DEFAULT NULL,
-    street    int2 DEFAULT NULL,
-    validated int2 DEFAULT NULL,
-    lot       int2 DEFAULT NULL,
-    valet     int2 DEFAULT NULL,
+    garage      int2 DEFAULT NULL,
+    street      int2 DEFAULT NULL,
+    validated   int2 DEFAULT NULL,
+    lot         int2 DEFAULT NULL,
+    valet       int2 DEFAULT NULL,
     CONSTRAINT fk_amenagement_business FOREIGN KEY (business_id) REFERENCES dim_business (business_id)
 );
 
@@ -63,11 +64,10 @@ CREATE TABLE dim_amenagement
 CREATE TABLE dim_tips
 (
     tips_id          SERIAL PRIMARY KEY,
-    user_id          VARCHAR(22) NOT NULL,
     business_id      VARCHAR(22) NOT NULL,
-    compliment_count INTEGER   DEFAULT NULL,
-    text             TEXT      DEFAULT NULL,
-    date             TIMESTAMP DEFAULT NULL,
+    compliment_count INTEGER DEFAULT NULL,
+    text             TEXT    DEFAULT NULL,
+    date             DATE    DEFAULT NULL,
     CONSTRAINT fk_tips_business FOREIGN KEY (business_id) REFERENCES dim_business (business_id)
 );
 
@@ -82,7 +82,7 @@ CREATE TABLE dim_checkin
 (
     checkin_id  SERIAL PRIMARY KEY,
     business_id VARCHAR(22) NOT NULL,
-    date TIMESTAMP NOT NULL,
+    date        DATE        NOT NULL,
     FOREIGN KEY (business_id) REFERENCES dim_business (business_id)
 );
 
@@ -91,7 +91,7 @@ CREATE TABLE dim_checkin
 CREATE TABLE dim_city
 (
     city_id    SERIAL PRIMARY KEY,
-    city_name VARCHAR(64),
+    city_name  VARCHAR(64),
     population INTEGER,
     state      VARCHAR(2)
 );
@@ -101,10 +101,8 @@ CREATE TABLE dim_reviews
 (
     review_id   SERIAL PRIMARY KEY,
     business_id VARCHAR(22) NOT NULL,
-    cool        INTEGER DEFAULT NULL,
-    date        DATE    DEFAULT NULL,
-    funny       INTEGER DEFAULT NULL,
-    stars       FLOAT   DEFAULT NULL,
+    stars       FLOAT DEFAULT NULL,
+    date        DATE  DEFAULT NULL,
     CONSTRAINT fk_reviews_business FOREIGN KEY (business_id) REFERENCES dim_business (business_id)
 );
 

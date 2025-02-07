@@ -3,7 +3,7 @@
 -- **************************
 
 -- Les type de commerces avec leur catégorie et des informations sur générales
-SELECT t4.name,
+SELECT t2.name,
        STRING_AGG(
                (SELECT t6.category
                 FROM dim_categories AS t6
@@ -17,13 +17,12 @@ SELECT t4.name,
                   AND t6.category = 'Categorie'
                 LIMIT 1), ', ') AS categories,
        t1.review_count,
-       t4.checkin_count,
-       avg(t5.stars)            AS avg_stars,
+       t2.checkin_count,
+       t2.avg_stars,
        t1.city
 FROM fact_business AS t1
-         INNER JOIN dim_business AS t4 ON t1.business_id = t4.business_id
-         INNER JOIN dim_reviews AS t5 ON t1.business_id = t5.business_id
-GROUP BY t1.business_id, t4.name, t1.review_count, t4.checkin_count, t1.city;
+         INNER JOIN dim_business AS t2 ON t1.business_id = t2.business_id
+GROUP BY t1.business_id, t2.name, t1.review_count, t2.checkin_count, t2.avg_stars, t1.city;
 
 
 -- Répartition des business par catégorie
@@ -70,7 +69,7 @@ FROM dim_city AS t1
          INNER JOIN fact_business AS t2
                     ON t1.city_name = upper(t2.city)
 WHERE population > 0
-GROUP BY t1.city_name, t1.population;
+GROUP BY t2.city, t1.population;
 
 
 -- Répartition des catégories de business par ville avec le nombre de business
@@ -115,9 +114,10 @@ GROUP BY t1.state
 ORDER BY avg_checkin_count DESC;
 
 
--- Les city qui font en moyenne le plus de checkins
+-- Les notes moyennes par ville
 SELECT t1.city,
        AVG(t2.checkin_count) AS avg_checkin_count,
+       AVG(t2.avg_stars)     AS avg_stars,
        COUNT(t1.business_id) AS count_business
 FROM fact_business AS t1
          INNER JOIN dim_business AS t2
@@ -126,8 +126,18 @@ FROM fact_business AS t1
 WHERE t2.checkin_count > 0
   AND t2.checkin_count IS NOT NULL
   AND t3.population > 0
-GROUP BY t3.city_name
+GROUP BY t1.city
 ORDER BY avg_checkin_count DESC;
+
+
+-- Les villes qui ont le plus de reviews
+SELECT t2.city, count(t2.business_id) AS count_reviews
+FROM dim_reviews AS t1
+         INNER JOIN dim_business AS t2 ON t1.business_id = t2.business_id
+         INNER JOIN dim_city AS t3 ON upper(t2.city) = t3.city_name
+WHERE t3.population > 0
+GROUP BY t2.city
+ORDER BY count_reviews DESC;
 
 -- **************************
 -- ANALYSE SUR LES HORAIRES
@@ -196,12 +206,17 @@ WITH HoursFrequency AS (SELECT 'Monday' AS day_of_week,
                         FROM dim_business_hours bh
                                  JOIN dim_hours h ON h.id_hours = bh.id_hours_sunday
                         WHERE h.hours NOT IN ('', '0:0-0:0')
-                        GROUP BY h.hours)
+                        GROUP BY h.hours),
+     RankedHours AS (SELECT day_of_week,
+                            common_hours,
+                            frequency,
+                            ROW_NUMBER() OVER (PARTITION BY day_of_week ORDER BY frequency DESC) AS rank
+                     FROM HoursFrequency)
 SELECT day_of_week,
        common_hours,
-       MAX(frequency) AS max_frequency
-FROM HoursFrequency
-GROUP BY day_of_week
+       frequency AS max_frequency
+FROM RankedHours
+WHERE rank = 1
 ORDER BY CASE day_of_week
              WHEN 'Monday' THEN 1
              WHEN 'Tuesday' THEN 2
@@ -377,6 +392,7 @@ FROM temp
 GROUP BY month_day
 ORDER BY month_day;
 
+
 -- Nombre de checkins total
 SELECT count(checkin_id)
 FROM dim_checkin;
@@ -388,3 +404,31 @@ FROM dim_reviews;
 -- Nombre de tips total
 SELECT count(tips_id)
 FROM dim_tips;
+
+-- **************************
+-- AUTRES ANALYSES
+-- **************************
+
+
+-- Taille des tables sur Postgres
+SELECT n.nspname || '.' || c.relname                 AS table_name,
+       pg_size_pretty(pg_total_relation_size(c.oid)) AS size_pretty,
+       pg_total_relation_size(c.oid) / 1024 / 1024   AS size_mb,
+       t.row_count
+FROM pg_class c
+         JOIN
+     pg_namespace n ON n.oid = c.relnamespace
+         LEFT JOIN
+     (SELECT relid,
+             n_live_tup AS row_count
+      FROM pg_stat_user_tables) t
+     ON t.relid = c.oid
+WHERE c.relkind = 'r'
+  AND n.nspname NOT IN ('pg_catalog', 'information_schema')
+ORDER BY size_mb DESC;
+
+
+-- Taille de la base de données sur Postgres
+SELECT
+    pg_size_pretty(pg_database_size(current_database())) AS total_size,
+    pg_database_size(current_database()) / 1024 / 1024 AS total_size_mb;

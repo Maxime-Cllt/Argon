@@ -65,7 +65,6 @@ CREATE TABLE dim_amenagement
 CREATE TABLE dim_tips
 (
     tips_id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id          VARCHAR(22) NOT NULL,
     business_id      VARCHAR(22) NOT NULL,
     compliment_count INTEGER  DEFAULT NULL,
     text             TEXT     DEFAULT NULL,
