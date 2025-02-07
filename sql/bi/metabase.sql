@@ -158,7 +158,6 @@ FROM dim_business_hours bh
              OR h.id_hours = bh.id_hours_saturday
              OR h.id_hours = bh.id_hours_sunday
 WHERE length(h.hours) > 0
-  AND h.hours NOT NULL
   AND h.hours NOT IN ('0:0-0:0')
 GROUP BY h.hours
 ORDER BY frequency DESC;
@@ -244,17 +243,30 @@ WHERE id_hours_monday = 1
 -- **************************
 
 -- Les catégories les plus communes par ville
-SELECT t1.city,
-       t2.category
-FROM fact_business AS t1
-         INNER JOIN dim_categories AS t2
-                    ON t1.category_id = t2.category_id
-         INNER JOIN dim_city AS t3 ON upper(t1.city) = t3.city_name
-WHERE t1.category_id IS NOT NULL
-  AND t2.category != 'Categorie'
-  AND length(t2.category) > 0
-  AND t3.population > 0
-GROUP BY t3.city_name;
+WITH CategoryCount AS (SELECT t1.city,
+                              t2.category,
+                              COUNT(*) AS category_count
+                       FROM fact_business AS t1
+                                INNER JOIN dim_categories AS t2
+                                           ON t1.category_id = t2.category_id
+                                INNER JOIN dim_city AS t3
+                                           ON upper(t1.city) = t3.city_name
+                       WHERE t1.category_id IS NOT NULL
+                         AND t2.category != 'Categorie'
+                         AND length(t2.category) > 0
+                         AND t3.population > 0
+                       GROUP BY t1.city, t2.category)
+   , MaxCategory AS (SELECT city,
+                            category,
+                            category_count,
+                            ROW_NUMBER() OVER (PARTITION BY city ORDER BY category_count DESC) AS rn
+                     FROM CategoryCount)
+SELECT city,
+       category,
+       category_count
+FROM MaxCategory
+WHERE rn = 1
+ORDER BY city;
 
 
 -- Les attributs les plus communes à Las Vegas
@@ -337,12 +349,37 @@ ORDER BY count_business DESC;
 -- **************************
 
 
--- L'historique des checkins sur toute la période
+-- La courbe de tendance de l'utilisation de l'application
+WITH temp AS (SELECT date,
+                     COUNT(checkin_id) AS source_checkin,
+                     0                 AS count_tips,
+                     0                 AS rewiew_count
+              FROM dim_checkin
+              WHERE date > '2014-01-01'
+
+              GROUP BY date
+              UNION ALL
+              SELECT date,
+                     0              AS source_checkin,
+                     COUNT(tips_id) AS count_tips,
+                     0              AS rewiew_count
+              FROM dim_tips
+              WHERE date > '2014-01-01'
+              GROUP BY date
+              UNION ALL
+              SELECT date,
+                     0                AS source_checkin,
+                     0                AS rewiew_count,
+                     COUNT(review_id) AS rewiew_count
+              FROM dim_reviews
+              WHERE date > '2014-01-01'
+              GROUP BY date)
 SELECT date,
-       COUNT(date) AS total_checkins
-FROM dim_checkin
-WHERE date > '2019-01-01'
-GROUP BY date;
+       SUM(source_checkin + count_tips + rewiew_count) AS total
+FROM temp
+GROUP BY date
+ORDER BY date;
+
 
 -- Les jours de l'année avec le plus de checkins
 SELECT strftime('%m-%d', date) AS month_day, COUNT(checkin_id) AS checkin_count
@@ -409,7 +446,6 @@ FROM dim_tips;
 -- AUTRES ANALYSES
 -- **************************
 
-
 -- Taille des tables sur Postgres
 SELECT n.nspname || '.' || c.relname                 AS table_name,
        pg_size_pretty(pg_total_relation_size(c.oid)) AS size_pretty,
@@ -429,6 +465,5 @@ ORDER BY size_mb DESC;
 
 
 -- Taille de la base de données sur Postgres
-SELECT
-    pg_size_pretty(pg_database_size(current_database())) AS total_size,
-    pg_database_size(current_database()) / 1024 / 1024 AS total_size_mb;
+SELECT pg_size_pretty(pg_database_size(current_database())) AS total_size,
+       pg_database_size(current_database()) / 1024 / 1024   AS total_size_mb;
