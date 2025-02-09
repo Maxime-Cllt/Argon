@@ -87,9 +87,8 @@ SELECT business_id,
 FROM business_parking;
 
 -- Remplissage de la table dim_tips
-INSERT INTO dim_tips (user_id, business_id, compliment_count, text, date)
-SELECT t1.user_id,
-       t1.business_id,
+INSERT INTO dim_tips (business_id, compliment_count, text, date)
+SELECT t1.business_id,
        t1.compliment_count,
        t1.text,
        DATE(t1.date)
@@ -106,10 +105,30 @@ GROUP BY key;
 INSERT INTO dim_city (city_name, population, state)
 SELECT upper(city_name) AS city_name
      , population
-     , country
+     , state
 FROM city
 GROUP BY population
 ORDER BY city_name;
+
+-- Remplissage de la table dim_reviews
+INSERT INTO dim_reviews (business_id, stars, date)
+SELECT business_id,
+       stars,
+       DATE(date)
+FROM reviews;
+
+-- Remplissage de la table dim_sentimental_analysis
+INSERT INTO dim_sentimental_analysis (business_id, sentiment, confidence)
+SELECT business_id,
+       sentiment,
+       confidence
+FROM review_sentiment;
+
+INSERT INTO dim_sentimental_analysis (business_id, sentiment, confidence)
+SELECT business_id,
+       sentiment,
+       confidence
+FROM tips_sentiment;
 
 -- Remplissage de la table fact_business
 INSERT INTO fact_business (business_id, category_id, review_count, city, postal_code, state, value)

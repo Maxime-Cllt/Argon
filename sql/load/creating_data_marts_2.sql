@@ -22,6 +22,7 @@ CREATE TABLE dim_business
     postal_code   VARCHAR(8)   DEFAULT NULL,
     review_count  INTEGER      DEFAULT NULL,
     checkin_count INTEGER DEFAULT NULL,
+    avg_stars     FLOAT   DEFAULT NULL,
     latitude      FLOAT   DEFAULT NULL,
     longitude     FLOAT   DEFAULT NULL
 );
@@ -30,9 +31,7 @@ CREATE TABLE dim_reviews
 (
     review_id   INTEGER PRIMARY KEY AUTOINCREMENT,
     business_id VARCHAR(22) NOT NULL,
-    cool        INTEGER DEFAULT NULL,
     date        DATE    DEFAULT NULL,
-    funny       INTEGER DEFAULT NULL,
     stars       INTEGER DEFAULT NULL
 );
 
@@ -105,6 +104,14 @@ CREATE TABLE dim_city
     state      VARCHAR(2)
 );
 
+CREATE TABLE dim_sentimental_analysis
+(
+    sentimental_analysis_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    business_id             VARCHAR(22) NOT NULL,
+    sentiment               VARCHAR(10) DEFAULT NULL,
+    confidence              FLOAT       DEFAULT NULL,
+    FOREIGN KEY (business_id) REFERENCES dim_business (business_id)
+);
 
 CREATE TABLE fact_business
 (

@@ -12,7 +12,7 @@ echo "Execution des scripts python"
 python script/extract/business_to_sqlite.py
 python script/extract/checkin_date_to_sqlite.py
 python script/extract/tip_to_sqlite.py
-python script/extract/population_to_sqlite.py
+python script/extract/csv_to_sqlite.py
 
 # execution des scripts sql
 echo "Nettoyage des données"

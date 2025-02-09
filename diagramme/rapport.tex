@@ -136,12 +136,14 @@ Sur la base des besoins identifiés, nous avons défini les objectifs analytique
 \item Analyser les horaires d’ouverture les plus courants des commerces, pour optimiser leur disponibilité et leur visibilité.
 \item Étudier les attributs les plus fréquents des commerces, pour identifier les services les plus recherchés par les utilisateurs.
 \item Analyser les tendances au fil du temps, en examinant les checkins et les tips sur une période donnée.
+\item Extraire des informations sur les données des commerces via l'utilisation d'algorithme de machine learning pour etablir un score de popularité sur les commerces.
 \end{itemize}
 
 Nous pensons que ces analyses permettront de mieux comprendre les tendances et les préférences des utilisateurs, ainsi que les caractéristiques des commerces les plus populaires. Ces informations peuvent être utiles pour les propriétaires d’établissements, les gestionnaires de franchises ou les analystes de marché qui souhaitent optimiser leurs stratégies commerciales et leur présence en ligne.
 Par exemple, en identifiant les villes les plus attractives,
 les commerçants peuvent cibler leurs efforts de marketing et d’expansion pour maximiser leur visibilité et leur rentabilité.
 De même, en analysant les horaires d’ouverture les plus courants, ils peuvent ajuster leurs plages horaires pour répondre aux besoins de leur clientèle et augmenter leur fréquentation.
+
 
 \chapter*{Conception du Data Warehouse}
 
@@ -171,7 +173,8 @@ Avec les questions et les besoins identifiés, nous avons défini les schémas s
 \item "dim_hours" : Décrit tous les horaires possibles d'ouverture des commerces.
 \item dim_business_hours : Décrit les horaires d'ouverture des commerces.
 \item dim_amenagement : Décrire les aménagements des commerces.
-\item dim_tips : Décrit les avis donnés par les utilisateurs sur les commerces.
+\item dim_reviews : Décrit les avis donnés par les utilisateurs sur les commerces.
+\item dim_tips : Décrit les conseils donnés par les utilisateurs sur les commerces.
 \item dim_city : Décrit les villes en fonction de leur nombre d'habitants et de leur pays.
 \item dim_checkin : Décrit les dates des checkins effectués par les utilisateurs dans les commerces.
 \end{itemize}
@@ -190,6 +193,7 @@ Pour la mise en œuvre de notre data warehouse, nous avons choisi les technologi
 \begin{itemize}
 
 \item Python : Nous avons choisi d’utiliser le langage Python avec différentes librairies comme Pandas pour implémenter notre ETL. Nous avons opté pour cette solution en raison de sa simplicité et l'aisance que nous avons grâce aux séances de l'UE Machine Learning et Deep Learning, où nous avons utilisé Pandas pour manipuler des données dans des fichiers CSV et JSON\@.
+De plus, nous prevoyons d'etendre les données que nous avons pour effectuer des analyses plus poussées comme l'utilisation de librairies de machine learning pour evaluer la popularité d'un commerce en fonction de ses attributs.
 \item SGBD (temporaire) SQLite : Le choix de SQLite s’est imposé pour plusieurs raisons. Tout d’abord, il s’agit d’une solution légère et intégrée qui ne nécessite aucune configuration complexe ni serveur dédié,
 ce qui simplifie le déploiement et la maintenance. Ensuite, SQLite est entièrement autonome et stocke les données dans un seul fichier, ce qui facilite grandement le transport et le
 partage de la base de données. Enfin, sa compatibilité avec la plupart des systèmes d’exploitation et son support natif dans Python en font une option pratique et efficace pour
@@ -471,9 +475,7 @@ Metabase fournit de bons outils pour répondre à ce besoin.
 
 Les tableaux de bord et les visualisations ont été regroupé en catégories comme comme enoncé dans la section sur l'analyse des besoins, cela permet de faciliter la navigation et de rendre les informations plus accessibles.
 
-Voici un aperçu des tableaux de bord et des visualisations créés :
-
-
+Ces derniers ont été exportés sous forme de fichier PDF pour pouvoir etre mieux visualisés pour ce rapport dans le dossier "metabase/".
 
 La majorité de ces graphiques utilisent des reqêtres que nous avons préalablement écrites dans un query editor.
 Ces requêtes sont disponibles dans le dossier "sql/bi/report/metabase.sql".
@@ -494,9 +496,9 @@ Voici une analyse que nous avons pu tirer des données :
 
 \item Les villes les plus populaires sont Las Vegas, Phoenix et Toronto, avec un nombre élevé de commerces et d'utilisateurs.
 
-\item L'attribut le plus commun est d'avoir le "Wi-Fi"et la catégorie la plus commune est "Restaurants".
+\item L'attribut le plus commun est d'avoir le "Wi-Fi"et la catégorie la plus commune est "Restaurant".
 
-\item Les heures d'ouverture les plus courantes sont de 8h à 17h, du lundi au vendredi.
+\item Les heures d'ouverture les plus courantes sont de 8h à 17h, du lundi au jeudi et de 9h à 17 le vendredi,
 
 
 \item 6.3 Analyse des performances

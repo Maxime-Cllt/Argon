@@ -442,6 +442,25 @@ FROM dim_reviews;
 SELECT count(tips_id)
 FROM dim_tips;
 
+
+-- **************************
+-- ANALYSE AVEC IA
+-- **************************
+
+-- Les business en general avec une analyse sentimentale
+SELECT t2.name,
+       SUM(CASE WHEN sentiment = 'POSITIVE' THEN 1 ELSE 0 END) AS positive_count,
+       SUM(CASE WHEN sentiment = 'NEGATIVE' THEN 1 ELSE 0 END) AS negative_count,
+       SUM(CASE WHEN sentiment = 'NEUTRAL' THEN 1 ELSE 0 END)  AS neutral_count
+FROM dim_sentimental_analysis AS t1
+         INNER JOIN dim_business AS t2
+                    ON t1.business_id = t2.business_id
+where t2.name IS NOT NULL
+   OR length(t2.name) > 0
+GROUP BY t1.business_id;
+
+
+
 -- **************************
 -- AUTRES ANALYSES
 -- **************************
@@ -467,3 +486,13 @@ ORDER BY size_mb DESC;
 -- Taille de la base de données sur Postgres
 SELECT pg_size_pretty(pg_database_size(current_database())) AS total_size,
        pg_database_size(current_database()) / 1024 / 1024   AS total_size_mb;
+
+
+-- Taille des tables sur SQLite
+SELECT SUM(table_size_bytes)
+FROM (SELECT name        AS table_name,
+             SUM(pgsize) AS table_size_bytes
+      FROM dbstat
+      WHERE name IN
+            ('dim_amenagement', 'dim_hours', 'dim_business', 'dim_city', 'dim_tips',
+             'dim_checkin', 'dim_reviews', 'fact_business', 'dim_business_hours', 'dim_categories'));

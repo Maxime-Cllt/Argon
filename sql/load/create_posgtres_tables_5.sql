@@ -106,6 +106,15 @@ CREATE TABLE dim_reviews
     CONSTRAINT fk_reviews_business FOREIGN KEY (business_id) REFERENCES dim_business (business_id)
 );
 
+CREATE TABLE dim_sentimental_analysis
+(
+    sentimental_analysis_id SERIAL PRIMARY KEY,
+    business_id             VARCHAR(22) NOT NULL,
+    sentiment               VARCHAR(10) DEFAULT NULL,
+    confidence              FLOAT       DEFAULT NULL,
+    FOREIGN KEY (business_id) REFERENCES dim_business (business_id)
+);
+
 -- Create the fact_business table
 CREATE TABLE fact_business
 (
