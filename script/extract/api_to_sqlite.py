@@ -25,7 +25,6 @@ if __name__ == '__main__':
 
     data = {}
 
-    # check if table exists
     conn.execute("CREATE TABLE IF NOT EXISTS city (city_name VARCHAR(255), population INT, country VARCHAR(2))")
     conn.commit()
 
@@ -47,7 +46,6 @@ if __name__ == '__main__':
         except Exception as e:
             print(f"Erreur pour la ville {city} : {e}")
 
-    # insert data
     for city, population in data.items():
         conn.execute(prepared_insert, (city, population[0], population[1]))
 

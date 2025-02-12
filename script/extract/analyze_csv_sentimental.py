@@ -79,7 +79,7 @@ def create_visualizations(df):
     plt.close()
 
 
-def analyze_csv_file(file_path):
+def analyze_csv_file(file_path: str):
     """Analyze all comments in the CSV file"""
     try:
         # Read the CSV file
@@ -170,6 +170,5 @@ def print_summary(df):
 
 
 if __name__ == "__main__":
-    # get the file path
-    file_path = input("Enter the path to the CSV file: ")
+    file_path = input("Entrer le chemin du fichier CSV: ")
     analyze_csv_file(file_path)

@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS dim_categories;
 DROP TABLE IF EXISTS dim_hours;
 DROP TABLE IF EXISTS dim_checkin;
 DROP TABLE IF EXISTS dim_reviews;
+DROP TABLE IF EXISTS dim_sentimental_analysis;
 DROP TABLE IF EXISTS fact_business;
 
 CREATE TABLE dim_business
@@ -21,10 +22,10 @@ CREATE TABLE dim_business
     state         VARCHAR(3)   DEFAULT NULL,
     postal_code   VARCHAR(8)   DEFAULT NULL,
     review_count  INTEGER      DEFAULT NULL,
-    checkin_count INTEGER DEFAULT NULL,
-    avg_stars     FLOAT   DEFAULT NULL,
-    latitude      FLOAT   DEFAULT NULL,
-    longitude     FLOAT   DEFAULT NULL
+    checkin_count INTEGER      DEFAULT NULL,
+    avg_stars     FLOAT        DEFAULT NULL,
+    latitude      FLOAT        DEFAULT NULL,
+    longitude     FLOAT        DEFAULT NULL
 );
 
 CREATE TABLE dim_reviews
@@ -98,7 +99,7 @@ CREATE TABLE dim_checkin
 
 CREATE TABLE dim_city
 (
-    city_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    city_id    INTEGER PRIMARY KEY AUTOINCREMENT,
     city_name  VARCHAR(32),
     population INTEGER,
     state      VARCHAR(2)

@@ -5,6 +5,10 @@
 Ce rapport présente les différentes étapes que nous avons suivies pour concevoir et implémenter un data warehouse à partir de données provenant de la plateforme Yelp.
 L'introdcution présente le contexte du projet et les objectifs visés.
 L'analyse du sujet et des données décrit les données disponibles, les besoins des utilisateurs et les objectifs analytiques.
+La conception du data warehouse détaille l'approche méthodologique, les spécifications des schémas et les choix techniques.
+L'intégration des données explique l'architecture de l'ETL, les problèmes rencontrés et les solutions apportées.
+La présentation des résultats met en avant les tableaux de bord et les visualisations des données.
+Le bilan du projet résume les réalisations, les difficultés rencontrées et les perspectives d'amélioration.
 
 
 \section*{Introduction}
@@ -80,8 +84,8 @@ Voici le diagramme relationnel de ce schéma de base de données :
 
 \subsection*{3.1.3. Élargissement des données}
 
-Pour enrichir les analyses et les visualisations, nous avons envisagé d’intégrer des données supplémentaires, telles que des données démographiques, comme le nombre d'habitants par ville.
-Ces données ont été obtenues à partir de sources externes (via API).
+Pour enrichir les analyses et les visualisations, nous avons envisagé d’intégrer des données supplémentaires, telles que des données démographiques, comme le nombre d'habitants par ville ainsi qu'une anlyse réalisé par un algorithme de machine learning pour établir un score de popularité sur les commerces via les reviews et les tips.
+Les données démographiques ont été obtenues à partir de sources externes (via API).
 Nous pensons que ces informations complémentaires permettront de mieux comprendre les tendances et les caractéristiques des commerces, en les croisant avec des données géographiques et démographiques.
 
 
@@ -177,6 +181,7 @@ Avec les questions et les besoins identifiés, nous avons défini les schémas s
 \item dim_tips : Décrit les conseils donnés par les utilisateurs sur les commerces.
 \item dim_city : Décrit les villes en fonction de leur nombre d'habitants et de leur pays.
 \item dim_checkin : Décrit les dates des checkins effectués par les utilisateurs dans les commerces.
+\item dim_sentimental_analysis : Décrit les scores des analyses sentimentales des reviews et des tips.
 \end{itemize}
 
 \end{itemize}
@@ -193,7 +198,7 @@ Pour la mise en œuvre de notre data warehouse, nous avons choisi les technologi
 \begin{itemize}
 
 \item Python : Nous avons choisi d’utiliser le langage Python avec différentes librairies comme Pandas pour implémenter notre ETL. Nous avons opté pour cette solution en raison de sa simplicité et l'aisance que nous avons grâce aux séances de l'UE Machine Learning et Deep Learning, où nous avons utilisé Pandas pour manipuler des données dans des fichiers CSV et JSON\@.
-De plus, nous prevoyons d'etendre les données que nous avons pour effectuer des analyses plus poussées comme l'utilisation de librairies de machine learning pour evaluer la popularité d'un commerce en fonction de ses attributs.
+De plus, nous prevoyons d'etendre les données que nous avons pour effectuer des analyses plus poussées comme l'utilisation de librairies de machine learning pour établir un score de popularité sur les commerces.
 \item SGBD (temporaire) SQLite : Le choix de SQLite s’est imposé pour plusieurs raisons. Tout d’abord, il s’agit d’une solution légère et intégrée qui ne nécessite aucune configuration complexe ni serveur dédié,
 ce qui simplifie le déploiement et la maintenance. Ensuite, SQLite est entièrement autonome et stocke les données dans un seul fichier, ce qui facilite grandement le transport et le
 partage de la base de données. Enfin, sa compatibilité avec la plupart des systèmes d’exploitation et son support natif dans Python en font une option pratique et efficace pour
@@ -232,7 +237,8 @@ Nous voulons que les données soient stockées dans un format tabulaire pour fac
 Voici un schéma de l'extraction des données et le schéma relationnel qui en découle :
 
 
-Chacune des étapes de l’ETL sera détaillée dans les sections suivantes, en mettant en évidence l'approche adoptée, les problèmes rencontrés et les solutions apportées.
+Sur ce schéma ne figure pas l'extraction via l'analyse sentimentale des commentaires car ce ne sont pas des données à extraire mais à générer.
+
 
 \subsection{5.1.2 Transformation des données}
 
@@ -332,6 +338,14 @@ Pour notre usage, nous n'utilisons que les champs "population" et "countryCode. 
 
 Nous avons pu quantifier le nombre de villes à traiter en faisant une requete d'agrégation sur le nom de la ville.
 Nous avons trouvé ~ 1200 villes différentes, ce qui est un nombre raisonnable en terme de requêtes à effectuer et de données à stocker.
+
+
+\subsubsection{5.3.1.4 IA}
+
+L'analyse sentimentale des commentaires est une tâche complexe qui nécessite l'utilisation d'algorithmes de machine learning et de modèles pré-entrainés.
+Le but de cette analyse est de déterminer si un commentaire est positif, négatif ou neutre. Cela nous permettra d'établir un score de popularité sur les commerces en fonction des avis des utilisateurs.
+Nous utlisons les commentaires des utilisateurs dans les reviews et les tips pour effectuer cette analyse, cela represente ~9.3 millions de lignes à traiter.
+
 
 \subsection{5.3.2 Problèmes rencontrés lors de la transformation des données}
 
@@ -461,7 +475,12 @@ tips & 50 & 50 \\
 \end{tabular}
 \end{center}
 
-L'intéret ici, est de voir la taille des données entre deux SGDB différents
+
+L’objectif ici est d’analyser la différence de taille des données entre deux SGBD distincts. On observe que SQLite génère une base de données globalement plus légère, malgré une structure de tables et des données identiques entre les deux systèmes.
+
+Cette différence de taille, bien que notable, doit être nuancée en fonction des besoins spécifiques d’un projet. Pour un volume de données relativement modeste, comme c’est le cas dans notre analyse, l’impact reste limité. En revanche, sur des bases de données bien plus volumineuses, cette réduction d’espace peut devenir un critère déterminant dans le choix du SGBD.
+
+Il convient toutefois de ne pas se limiter à la seule taille des données : les performances, la gestion des transactions, la concurrence d’accès ou encore la scalabilité sont autant de facteurs à prendre en compte pour choisir la solution la plus adaptée à un contexte donné.
 
 
 \chapter*{Présentation des résultats}
@@ -477,7 +496,7 @@ Les tableaux de bord et les visualisations ont été regroupé en catégories co
 
 Ces derniers ont été exportés sous forme de fichier PDF pour pouvoir etre mieux visualisés pour ce rapport dans le dossier "metabase/".
 
-La majorité de ces graphiques utilisent des reqêtres que nous avons préalablement écrites dans un query editor.
+La majorité de ces graphiques utilisent des reqêtres que nous avons préalablement écrites dans un éditeur de requête.
 Ces requêtes sont disponibles dans le dossier "sql/bi/report/metabase.sql".
 
 \item 6.2 Synthèse des résultats analytiques
