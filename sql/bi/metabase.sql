@@ -139,6 +139,11 @@ WHERE t3.population > 0
 GROUP BY t2.city
 ORDER BY count_reviews DESC;
 
+
+-- Le nombre de villes
+SELECT count(*)
+FROM dim_city;
+
 -- **************************
 -- ANALYSE SUR LES HORAIRES
 -- **************************
@@ -267,6 +272,11 @@ SELECT city,
 FROM MaxCategory
 WHERE rn = 1
 ORDER BY city;
+
+
+-- Le nombre de catégories
+SELECT count(category_id)
+FROM dim_categories;
 
 
 -- Les attributs les plus communes à Las Vegas
@@ -476,6 +486,22 @@ GROUP BY t2.business_id, t2.name;
 
 SELECT *
 FROM vue_sentimental_analysis;
+
+
+-- Le nombre de commentaires positifs
+SELECT count(sentimental_analysis_id)
+FROM dim_sentimental_analysis
+WHERE sentiment = 'POSITIVE';
+
+-- Le nombre de commentaires négatifs
+SELECT count(sentimental_analysis_id)
+FROM dim_sentimental_analysis
+WHERE sentiment = 'NEGATIVE';
+
+-- Le nombre de commentaires neutres
+SELECT count(sentimental_analysis_id)
+FROM dim_sentimental_analysis
+WHERE sentiment = 'NEUTRAL';
 
 
 -- **************************

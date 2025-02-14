@@ -9,17 +9,12 @@
 <img src="/assets/argon.png" alt="Argon" align="center" width="256px" height="256px" />
 </div>
 
-## 📄 Lien du Rapport
-
-Pour consulter le rapport complet, cliquez sur le lien ci-dessous :
 
 [Rapport](https://docs.google.com/document/d/1sLP6f43I187cvIch9RbBHyOVyccv67lUW4Wt1hDGoM4/edit?usp=sharing)
 
-## 🌐 Lien du Dashboard
+## 📄 Visualiser les rapports
 
-Pour accéder au dashboard Metabase, cliquez sur le lien ci-dessous :
-
-[Dashboard](http://localhost:3000/)
+Les rapports sont disponibles dans le dossier `metabase/pdf`.
 
 ## 📝 Description
 
