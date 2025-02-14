@@ -449,16 +449,33 @@ FROM dim_tips;
 
 -- Les business en general avec une analyse sentimentale
 SELECT t2.name,
-       SUM(CASE WHEN sentiment = 'POSITIVE' THEN 1 ELSE 0 END) AS positive_count,
-       SUM(CASE WHEN sentiment = 'NEGATIVE' THEN 1 ELSE 0 END) AS negative_count,
-       SUM(CASE WHEN sentiment = 'NEUTRAL' THEN 1 ELSE 0 END)  AS neutral_count
+       COUNT(*) FILTER (WHERE sentiment = 'POSITIVE') AS positive_count,
+       COUNT(*) FILTER (WHERE sentiment = 'NEGATIVE') AS negative_count,
+       COUNT(*) FILTER (WHERE sentiment = 'NEUTRAL')  AS neutral_count
 FROM dim_sentimental_analysis AS t1
          INNER JOIN dim_business AS t2
                     ON t1.business_id = t2.business_id
 where t2.name IS NOT NULL
-   OR length(t2.name) > 0
-GROUP BY t1.business_id;
+  AND length(t2.name) > 0
+  AND t1.confidence > 0.5
+GROUP BY t2.business_id, t2.name;
 
+-- Vue pour les analyses sentimentales (meilleure performance)
+CREATE MATERIALIZED VIEW vue_sentimental_analysis AS
+SELECT t2.name,
+       COUNT(*) FILTER (WHERE sentiment = 'POSITIVE') AS positive_count,
+       COUNT(*) FILTER (WHERE sentiment = 'NEGATIVE') AS negative_count,
+       COUNT(*) FILTER (WHERE sentiment = 'NEUTRAL')  AS neutral_count
+FROM dim_sentimental_analysis AS t1
+         INNER JOIN dim_business AS t2
+                    ON t1.business_id = t2.business_id
+where t2.name IS NOT NULL
+  AND length(t2.name) > 0
+  AND t1.confidence > 0.5
+GROUP BY t2.business_id, t2.name;
+
+SELECT *
+FROM vue_sentimental_analysis;
 
 
 -- **************************
@@ -489,10 +506,11 @@ SELECT pg_size_pretty(pg_database_size(current_database())) AS total_size,
 
 
 -- Taille des tables sur SQLite
-SELECT SUM(table_size_bytes)
+SELECT table_size_bytes
 FROM (SELECT name        AS table_name,
              SUM(pgsize) AS table_size_bytes
       FROM dbstat
       WHERE name IN
             ('dim_amenagement', 'dim_hours', 'dim_business', 'dim_city', 'dim_tips',
-             'dim_checkin', 'dim_reviews', 'fact_business', 'dim_business_hours', 'dim_categories'));
+             'dim_checkin', 'dim_reviews', 'fact_business', 'dim_business_hours', 'dim_categories',
+             'dim_sentimental_analysis'));

@@ -19,7 +19,7 @@ def csv_to_postgres(csv_path: str, table_name: str, postgres_cursor, separator: 
 
     sql = f"""COPY {table_name} ({', '.join(header)}) FROM STDIN WITH (FORMAT CSV, DELIMITER '{separator}', HEADER TRUE, QUOTE '"', ESCAPE '\\');"""
 
-    print(f"Importation de {table_name} en cours...")
+    print(f"Importation de {table_name} en cours dans PostgreSQL...")
 
     try:
         postgres_cursor.execute(f"TRUNCATE TABLE {table_name} CASCADE;")
@@ -50,12 +50,6 @@ if __name__ == '__main__':
         POSTGRES_PORT = "5432"
         POSTGRES_DB = "mc150904"
 
-        # POSTGRES_USER = "root"
-        # POSTGRES_PASSWORD = "root"
-        # POSTGRES_HOST = "localhost"
-        # POSTGRES_PORT = "5432"
-        # POSTGRES_DB = "postgres"
-
         postgres_conn = psycopg2.connect(
             dbname=POSTGRES_DB,
             user=POSTGRES_USER,
@@ -74,7 +68,8 @@ if __name__ == '__main__':
             # 'dim_tips': False,
             # 'dim_city': False,
             # 'dim_categories': False,
-            # 'fact_business': False
+            # 'fact_business': False,
+            'dim_sentimental_analysis': False,
         }
 
         chunk_size = 10000
@@ -96,7 +91,7 @@ if __name__ == '__main__':
             if exist:
                 continue
 
-            print(f"Exportation de {table_name} en cours...")
+            print(f"Exportation de {table_name} en CSV en cours...")
             # récupérer les colonnes de la table
             sqlite_cursor.execute(f"PRAGMA table_info({table_name})")
             columns = [column[1] for column in sqlite_cursor.fetchall()]
@@ -126,16 +121,16 @@ if __name__ == '__main__':
             csv_path = os.path.join(temp_absolute_path, f"{table_name}.csv")
             csv_to_postgres(csv_path, table_name, postgres_cursor, separator=';')
 
-        file_to_import_from_data = {
-            'tpid2020_yelp_review.csv': 'dim_reviews'
-        }
-
-        # Pour les fichiers en local dans le répertoire data
-        for file, table_name in file_to_import_from_data.items():
-            csv_path = os.path.join(absolute_path, "data", file)
-            csv_to_postgres(csv_path, table_name, postgres_cursor, separator=',')
-
-        print(f"Temps d'exécution: {time.time() - start_time} secondes")
+        # file_to_import_from_data = {
+        #     'tpid2020_yelp_review.csv': 'dim_reviews'
+        # }
+        #
+        # # Pour les fichiers en local dans le répertoire data
+        # for file, table_name in file_to_import_from_data.items():
+        #     csv_path = os.path.join(absolute_path, "data", file)
+        #     csv_to_postgres(csv_path, table_name, postgres_cursor, separator=',')
+        #
+        # print(f"Temps d'exécution: {time.time() - start_time} secondes")
 
         # Close the connection
         postgres_cursor.close()

@@ -545,6 +545,10 @@ Nous avons jugé que ces temps d'exécution étaient satisfaisants pour les anal
 
 Le SGBD que nous utilisons possède une bonne configuration matérielle et logicielle, en plus de bénéficier de la proximité de ce dernier, en découlent des temps d'exécution rapides.
 
+Pour accélérer encore plus le chargement des données, nous pourrions envisager de créer des vues matérialisées ou des index avancés pour optimiser les performances des requêtes.
+C'est ce que nous avons fait pour le rapport sur les données généré par IA, c'est ce qui explique le temps de chargement aussi rapide.
+Sans utilisé de vue matérialisée, le temps de chargement était de 18 secondes.
+
 
 
 \chapter*{Documentation technique}

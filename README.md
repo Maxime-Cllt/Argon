@@ -1,9 +1,12 @@
 <div align="center">
   <h1>Argon</h1>
+    <p>
+        <strong>Entrepôt de données pour la plateforme Yelp</strong>
 </div>
 
+
 <div align="center">
-  <strong>Entrepôt de données pour la plateforme Yelp</strong>
+<img src="/assets/argon.png" alt="Argon" align="center" width="256px" height="256px" />
 </div>
 
 ## 📄 Lien du Rapport
