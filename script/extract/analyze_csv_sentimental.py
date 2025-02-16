@@ -7,7 +7,7 @@ import sys
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 
-# Suppression des avertissements
+
 warnings.filterwarnings('ignore')
 logging.getLogger("transformers.modeling_utils").setLevel(logging.ERROR)
 
@@ -17,7 +17,10 @@ class SentimentAnalyzer:
         """Initialize the sentiment analyzer"""
         self.classifier = pipeline(
             task="sentiment-analysis",
-            model="cardiffnlp/twitter-roberta-base-sentiment-latest"
+            model="cardiffnlp/twitter-roberta-base-sentiment-latest",
+            truncation=True,
+            max_length=512,  # Use a value less than or equal to the maximum allowed
+            device= 0,
         )
 
         self.label_mapping = {
@@ -79,7 +82,7 @@ def create_visualizations(df):
     plt.close()
 
 
-def analyze_csv_file(file_path: str):
+def analyze_csv_file(file_path):
     """Analyze all comments in the CSV file"""
     try:
         # Read the CSV file
@@ -109,11 +112,6 @@ def analyze_csv_file(file_path: str):
 
         # Convert results to DataFrame
         results_df = pd.DataFrame(results)
-
-        # Add metadata
-        results_df['analysis_date'] = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
-        results_df['analyzed_by'] = "Sudo-Rahman"
-
         # Save results
         output_path = 'sentiment_analysis_results.csv'
         results_df.to_csv(output_path, index=False)
@@ -170,5 +168,9 @@ def print_summary(df):
 
 
 if __name__ == "__main__":
-    file_path = input("Entrer le chemin du fichier CSV: ")
+    if len(sys.argv) > 1:
+        file_path = sys.argv[1]
+    else:
+        file_path = input("Enter the path to the CSV file: ")
+
     analyze_csv_file(file_path)
