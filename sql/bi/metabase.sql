@@ -503,6 +503,13 @@ SELECT count(sentimental_analysis_id)
 FROM dim_sentimental_analysis
 WHERE sentiment = 'NEUTRAL';
 
+-- Le nombre de commentaires positifs, négatifs et neutres
+SELECT sentiment, count(sentimental_analysis_id)
+FROM dim_sentimental_analysis
+WHERE sentiment IN ('POSITIVE', 'NEGATIVE', 'NEUTRAL')
+GROUP BY sentiment;
+
+
 
 -- **************************
 -- AUTRES ANALYSES
