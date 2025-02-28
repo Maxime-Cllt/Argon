@@ -9,8 +9,15 @@
 <img src="/assets/argon.png" alt="Argon" align="center" width="256px" height="256px" />
 </div>
 
+## 📦 Structure du projet
 
-[Rapport](https://docs.google.com/document/d/1sLP6f43I187cvIch9RbBHyOVyccv67lUW4Wt1hDGoM4/edit?usp=sharing)
+Le projet Argon est structuré de la manière suivante :
+
+<ul>
+<li>metabase : contient les rapports Metabase</li>
+<li>sql : contient les scripts SQL pour tout le projet</li>
+<li>script : contient les scripts Python pour le processus ETL</li>
+</ul>
 
 ## 📄 Visualiser les rapports
 
